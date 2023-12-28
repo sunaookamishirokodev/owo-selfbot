@@ -16,13 +16,16 @@ export const global = {
     captchaDetected: false,
     paused: false,
     slashError: 0,
-    totalcmd: 0,
+    totalbattle: 0,
+    totalhunt: 0,
+    totalowo: 0,
+    totalring: 0,
     totaltxt: 0,
-    prefix: ["owo"]
+    prefix: ['h']
 } as Tool
 
 global.FolderPath = path.join(os.homedir(), "data")
-global.DataPath = path.join(global.FolderPath, "data.json")
+global.DataPath = path.join(global.FolderPath, "selfbot.json")
 
 let Data = JSON.parse(
     fs.existsSync(global.DataPath) ? fs.readFileSync(global.DataPath, "utf-8") : "{}"

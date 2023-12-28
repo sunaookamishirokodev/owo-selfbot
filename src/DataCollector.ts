@@ -11,7 +11,7 @@ const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai. All rights reser
 
 let client:Client<boolean>, guildID:string, channelID:string[], waynotify:number[], webhookURL:string, autopray:string[],
 usernotify:string, musicPath:string, solveCaptcha:number, apiuser:string, apikey:string, prefix:string,
-apilink:string, autogem:number, autocrate:boolean = false, autoquote:boolean, autoreload:boolean,
+apilink:string, autogem:number, autocrate:boolean = true, autoquote:boolean, autoreload:boolean,
 autosleep:boolean, autoresume:boolean, autoslash:boolean, autoother:boolean, autodaily:boolean, 
 autosell:boolean, autohunt:boolean, upgradetrait:number, autogamble:string[], gamblingAmount:string
 
@@ -344,13 +344,6 @@ export const collectData = async (data:{[key:string]: Configuration}) => {
             process.exit(1)
         }
     }
-    try {
-        const newToken = await client.createToken()
-        console.log(newToken)
-        if(newToken) client.token = newToken
-    } catch (error) {
-        log("Failed to Generate New Token", "e")
-    }
     guildID = await getResult(listGuild(cache?.guildID))
     channelID = await getResult(listChannel(cache?.channelID))
     waynotify = await getResult(wayNotify(cache?.wayNotify))
@@ -367,10 +360,9 @@ export const collectData = async (data:{[key:string]: Configuration}) => {
     }
     else if(solveCaptcha === 2) apikey = await getResult(apiKey(cache?.apiKey), "Head To This Website And SignUp/SignIn. Then Copy The \x1b[1m\"API Key\"\x1b[0m Value in Account Settings On [Dashboard Tab] And Paste It Here\nLink: https://2captcha.com/enterpage")
     prefix = await getResult(botPrefix(cache?.cmdPrefix))
-    // apilink = await getResult(apiNCAI(cache?.apiNCAI), "Head To This Website And SignUp/SignIn. Then Copy The \x1b[1m\"APIKEY\"\x1b[0m Value And Paste It Here\nLink: https://dash.nocaptchaai.com/home")
     autopray = await getResult(prayCurse(cache?.autoPray))
     autogem = await getResult(gemOrder(cache?.autoGem))
-    if(autogem >= 0) autocrate = await getResult(trueFalse("Toggle Automatically Use Gem Crate", cache?.autoCrate))
+    if(autogem >= 0) autocrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate))
     if(solveCaptcha != 0) autohunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt))
     if(autohunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait))
     autogamble = await getResult(Gamble(cache?.autoGamble))

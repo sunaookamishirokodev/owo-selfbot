@@ -102,7 +102,10 @@ interface Tool {
     startTime: number
     lastTime?: number
     reloadTime?: number
-    totalcmd: number
+    totalhunt: number
+    totalbattle: number
+    totalring: number
+    totalowo: number
     totaltxt: number
     paused: boolean
     captchaDetected: boolean
