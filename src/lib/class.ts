@@ -106,6 +106,7 @@ interface Tool {
     totalbattle: number
     totalring: number
     totalowo: number
+    totalpraycurse: number
     totaltxt: number
     paused: boolean
     captchaDetected: boolean

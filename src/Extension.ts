@@ -38,6 +38,7 @@ const consoleNotify = async () => {
   console.log("\x1b[92mTotal hunt sent: \x1b[0m" + global.totalhunt);
   console.log("\x1b[92mTotal owo sent: \x1b[0m" + global.totalowo);
   console.log("\x1b[92mTotal ring sent: \x1b[0m" + global.totalring);
+  console.log("\x1b[92mTotal pray/curse sent: \x1b[0m" + global.totalpraycurse);
   console.log("\x1b[92mTotal text sent: \x1b[0m" + global.totaltxt);
   console.log("\x1b[92mTotal active time: \x1b[0m" + timeHandler(global.startTime, Date.now()));
   console.log("\x1b[36mSELFBOT HAS BEEN TERMINATED!\x1b[0m");
@@ -167,9 +168,7 @@ const reloadPresence = (client: discord.Client) => {
     .setName("Online but don't reply=))")
     .setDetails("Sleeping or studying...")
     .setStartTimestamp(new Date(global.startTime))
-    .setAssetsLargeImage(
-      "https://cdn.discordapp.com/attachments/1171073523704418317/1189805512372519005/file_123011997.png?ex=659f7fbb&is=658d0abb&hm=59d7118d0672da5b798de6958b5cca813eba98906b29c8da30eaf72b83177568&"
-    )
+    .setAssetsLargeImage(client.user?.bannerURL())
     .setAssetsLargeText("Do you love me?")
     .setAssetsSmallImage(client.user?.avatarURL({ format: "png", size: 1024 }))
     .setAssetsSmallText("Frontend Coder from Viet Nam")

@@ -23,8 +23,7 @@ let timeoutChannel = ranInt(17, 51),
   timeoutSleep = mapInt(timeoutShift, 38, 92, 160_000, 1_275_000),
   timeoutDelay = ranInt(15000, 22000),
   timeoutHuntbot: number;
-let ordinary = ["h", "b"],
-  other = ["run", "pup", "piku"],
+let other = ["run", "pup", "piku"],
   box = false,
   inv: string[],
   gem1: number[] | undefined,
@@ -64,8 +63,8 @@ const aDaily = async () => {
 
 const aPray = async () => {
   timeoutPray = new Date().setMinutes(new Date().getMinutes() + 5);
-  const cmd = global.config.autoPray[ranInt(0, global.config.autoPray.length)];
-  await send(cmd);
+  const cmd = global.config.autoPray[ranInt(0, global.config.autoPray.length - 1)];
+  await send(cmd).then(() => global.totalpraycurse++)
 };
 
 const aChannel = async () => {
@@ -76,7 +75,7 @@ const aChannel = async () => {
 };
 
 const aSleep = async () => {
-  log(`Selfbot is Taking A Break For ${timeHandler(0, timeoutSleep, true)}`, "i");
+  log(`Selfbot is taking a break for ${timeHandler(0, timeoutSleep, true)}`, "i");
   await sleep(timeoutSleep);
   const nextShift = ranInt(38, 92);
   timeoutShift += nextShift;
@@ -267,7 +266,7 @@ const aGamble = async () => {
 };
 
 const aGem = async (useGem1: boolean, useGem2: boolean, useGem3: boolean) => {
-  log("Run gem function", "a")
+  log("Run gem function", "a");
   await send("inv");
   const filter = (msg: Message<boolean>) =>
     msg.author.id == global.owoID &&
@@ -305,42 +304,31 @@ const aGem = async (useGem1: boolean, useGem2: boolean, useGem3: boolean) => {
 export const main = async () => {
   if (global.captchaDetected) return;
   if (global.lastTime && Date.now() - global.lastTime < 15_000) return;
-  const cmd = ordinary[ranInt(0, ordinary.length - 1)];
-  await send(cmd, global.config.autoSlash && ranInt(0, 4) === 3 ? "slashCommand" : "normalCommand").then(async () => {
-    switch (cmd) {
-      case "h":
-        await send("b", "normalCommand");
-        break;
-      case "b":
-        await send("h", "normalCommand");
-        break;
-      default:
-        log(`Invalid command!`, "e");
-    }
+  await send("b", global.config.autoSlash && ranInt(0, 4) === 3 ? "slashCommand" : "normalCommand").then(async () => {
     global.totalbattle++;
+    await send("h", "normalCommand");
     global.totalhunt++;
-  });
-
-  await send(ranInt(0, 1) === 0 ? "owo" : "uwu", "non-prefix").then(() => global.totalowo++);
-  await send("buy 1", "normalCommand").then(
-    () => global.totalring++
-  );
-  global.lastTime = Date.now();
-  if ((cmd.includes("h") || cmd.endsWith("h")) && global.config.autoGem >= 0) {
+    if (global.config.autoGem === -1) return;
     const filter = (msg: Message<boolean>) =>
       msg.author.id == global.owoID &&
       msg.content.includes(msg.guild?.members.me?.displayName!) &&
-      /hunt is empowered by| spent 5 .+ and caught a/.test(msg.content);
+      /hunt is empowered by|spent 5 \S+ and caught/.test(msg.content);
     const collector = global.channel.createMessageCollector({ filter, max: 1, time: 10_000 });
     collector.on("collect", async (msg) => {
-      log("Run out of gems", "i")
       let param1: boolean, param2: boolean, param3: boolean;
       param1 = !msg.content.includes("gem1") && (!gem1 || gem1.length > 0);
-      param2 = !msg.content.includes("gem2") && (!gem2 || gem2.length > 0);
-      param3 = !msg.content.includes("gem3") && (!gem3 || gem3.length > 0);
-      if (param1 || param2 || param3) await aGem(param1, param2, param3);
+      param2 = !msg.content.includes("gem3") && (!gem2 || gem2.length > 0);
+      param3 = !msg.content.includes("gem4") && (!gem3 || gem3.length > 0);
+      if (param1 || param2 || param3) {
+        sleep(5_000);
+        await aGem(param1, param2, param3);
+      }
     });
-  }
+  });
+
+  await send(ranInt(0, 1) === 0 ? "owo" : "uwu", "non-prefix").then(() => global.totalowo++);
+  await send("buy 1", "normalCommand").then(() => global.totalring++);
+  global.lastTime = Date.now();
   const commands = [
     {
       condition: global.config.autoPray.length > 0 && (!timeoutPray || Date.now() - timeoutPray >= 360_000),
