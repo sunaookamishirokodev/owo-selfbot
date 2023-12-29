@@ -4,14 +4,13 @@ This is a community version and currently in progress
 
 Please report bugs and keep on track with our announcement!
 
-    Since I have to prepare for my final grade/university entrance exams, this tool is paused until 2025/forever.
-    Thank you for trusting and being with us throughout the 2-year journey.
+    This tool was completely edited by me from the original version of LongAKolangle. So the original copyright belongs to him.
     If you have any question/suggestion, feel free to submit your idea to us.
     Please report if you have any issue/bugs/error while using, I will try my best to help with my responsibility.
 
 ## Requirement
 
-**Node.js Version:** v14.0.0 - v18.18.0
+**Node.js Version:** > v14.0.0
 
 For laptop and PC: Windows 8/8.1/10 or higher, Linux and MacOS
 
@@ -38,16 +37,16 @@ Please make sure that you have installed [Node.js LTS](https://nodejs.org/en/dow
 On Termux, run the following commands:
 
 ```bash
-apt update
-apt upgrade
-apt install nodejs-lts
-apt install git
+(sudo) apt update
+(sudo) apt upgrade
+(sudo) apt install nodejs-lts
+(sudo) apt install git
 ```
 
 Download and extract the module or clone/pull it using [Git](https://git-scm.com/downloads):
 
 ```bash
-git clone https://github.com/LongAKolangle/discord-owo-selfbot.git
+git clone https://github.com/sunaookamishirokodev/owo-selfbot-2.git
 ```
 
 Now [open the terminal inside folder](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) where you downloaded the selfbot and run the following command:
@@ -202,7 +201,7 @@ Your stars serve as fuel for our spirits, igniting our passion and dedication to
 
 Your stars inspire us to keep pushing boundaries, overcome challenges, and bring about meaningful change.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LongAKolangle/discord-owo-selfbot&type=Date)](https://star-history.com/#LongAKolangle/discord-owo-selfbot&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sunaookamishirokodev/owo-selfbot-2&type=Date)](https://star-history.com/#sunaookamishrokodev/owo-selfbot-2&Date)
 
 ## Contributing
 
@@ -215,33 +214,17 @@ Please make sure to update tests as appropriate.
 
 ## Contact
 
-**Facebook:** [Nguyễn Thành Long](https://www.facebook.com/profile.php?id=100026454971591)
+**Facebook:** [Sunaookami Shiroko](https://www.facebook.com/sunaookamishirokodev)
 
-**Fanpage:** [Nong ngoo ở đảo Ngố](https://www.facebook.com/profile.php?id=100086422962104)
+**Discord:** [Sunaookami Shiroko](https://discord.com/users/962375717465763961)
 
-**Patreon:** [Click here!](https://patreon.com/DiscordOwOSelfbot)
-
-**Email:** ntt.eternity2k6@gmail.com
-
-**Join our discord server:** [Join now](https://discord.gg/Yr92g5Zx3e)
-
-    Hello there, my name is Eternityy, and I wanted to take a moment to thank you for using our tool.
-
-    Since 2021, this project has been non-profit. But we're still committed to making it the best it can be,
-
-    With APIs like captcha-solving and quoting,... to help make your experience better and more efficient.
-
-    Unfortunately, funding has become an obstacle to our progress. Would you be willing to help us out with a small donation?
-
-    Even the price of a coffee cup can go a long way towards keeping us going. Every little bit helps, means the world to us.
-
-    Thank you for your time and consideration, and we hope you continue to enjoy our tool!
-
-#### MB Bank Vietnam / Momo / ZaloPay: **NGUYEN THANH LONG** **0978176370**
+**Join our discord server:** [Join now](https://discord.gg/BueTaePGMH)
 
 ## Acknowledgments
 
 **SPECIAL THANKS TO:**
+
+Eternityy
 
 Aiko-chan-ai
 
@@ -257,10 +240,10 @@ AmiiUwU
 
 ✨ Licensed under the MIT license.
 
-⛱️ Copyright © EternityVN x aiko-chan-ai 2022
+⛱️ Copyright © Shiroko x EternityVN x aiko-chan-ai 2022
 
 💖 Made by Vietnamese with love
 
-💫 We are BKI members (Baka Island - 💪Đảo Ngố Tàu)
+💫 We are Elaina Team
 
 **Tag:** Discord selfbot, OwO selfbot, Tool Farm OwO, Advanced OwO Selfbot, Selfbot Farm OwO, Discord OwO bot selfbot, Discord OwO selfbot, etc.
