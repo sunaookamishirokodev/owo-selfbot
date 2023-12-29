@@ -78,7 +78,7 @@ interface Configuration {
     cmdPrefix?: string
     autoPray: string[]
     autoGem: number
-    autoCrate?: boolean
+    autoCrate: boolean
     autoHunt:boolean
     upgradeTrait?: number
     autoGamble: string[]

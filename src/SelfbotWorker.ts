@@ -278,7 +278,7 @@ const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean) => {
     gem1 = inv.filter((elm) => /^05[1-7]$/.test(elm)).map(Number);
     gem3 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
     gem4 = inv.filter((elm) => /^07[2-8]$/.test(elm)).map(Number);
-    box = global.config.autoCrate != undefined && inv.includes("050");
+    box = global.config.autoCrate && inv.includes("050");
     if (box) {
       await send("lootbox all");
       return aGem(useGem1, useGem3, useGem4);
@@ -298,6 +298,7 @@ const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean) => {
     if (!ugem1 && !ugem3 && !ugem4) return;
     await send(`use ${ugem1 ?? ""} ${ugem3 ?? ""} ${ugem4 ?? ""}`.replace(/\s+/g, " "));
   });
+  await sleep(ranInt(4800, 6200));
 };
 
 export const main = async () => {

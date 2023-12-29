@@ -162,7 +162,7 @@ const commandHandler = async () => {
 
 const reloadPresence = (client: discord.Client) => {
   const activity = new discord.RichPresence()
-    .setApplicationId("817229550684471297")
+    .setApplicationId("1188482072197738557")
     .setType("STREAMING")
     .setName("Online but don't reply=))")
     .setDetails("Sleeping or studying...")
