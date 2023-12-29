@@ -246,9 +246,9 @@ const gemOrder = (cache?:number) => {
         type: "list",
         message: "Select your gem usage order",
         choices:[
-            { name: "Skip", value: -1 },
-            { name: "Best to Worst", value: 0 },
-            { name: "Worst to Best", value: 1 }
+            { name: "Skip", value: 0 },
+            { name: "Best to Worst", value: 1 },
+            { name: "Worst to Best", value: 2 }
         ],
         default: cache
     })
@@ -362,7 +362,7 @@ export const collectData = async (data:{[key:string]: Configuration}) => {
     prefix = await getResult(botPrefix(cache?.cmdPrefix))
     autopray = await getResult(prayCurse(cache?.autoPray))
     autogem = await getResult(gemOrder(cache?.autoGem))
-    if(autogem >= 0) autocrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate))
+    if(autogem > 0) autocrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate))
     if(solveCaptcha != 0) autohunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt))
     if(autohunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait))
     autogamble = await getResult(Gamble(cache?.autoGamble))

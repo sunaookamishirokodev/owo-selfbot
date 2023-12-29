@@ -67,7 +67,6 @@ const send = async (str: string, type: "normalCommand" | "slashCommand" | "quote
       case "non-prefix":
         await global.channel.send(str);
         log(str);
-        global.totalowo++;
     }
   } catch (error) {
     const typeError =

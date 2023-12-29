@@ -27,8 +27,8 @@ let other = ["run", "pup", "piku"],
   box = false,
   inv: string[],
   gem1: number[] | undefined,
-  gem2: number[] | undefined,
-  gem3: number[] | undefined;
+  gem3: number[] | undefined,
+  gem4: number[] | undefined;
 const traits = ["Efficiency", "Duration", "Cost", "Gain", "Experience", "Radar"];
 
 export const aReload = (force = false) => {
@@ -40,8 +40,8 @@ export const aReload = (force = false) => {
     global.reloadTime = new Date(global.reloadTime).setDate(new Date(global.reloadTime).getDate() + 1);
   try {
     gem1 = undefined;
-    gem2 = undefined;
     gem3 = undefined;
+    gem4 = undefined;
     if (Date.now() >= global.reloadTime)
       global.reloadTime = new Date(global.reloadTime).setDate(new Date(global.reloadTime).getDate() + 1);
     global.config = JSON.parse(fs.readFileSync(global.DataPath, "utf-8"))[
@@ -64,7 +64,7 @@ const aDaily = async () => {
 const aPray = async () => {
   timeoutPray = new Date().setMinutes(new Date().getMinutes() + 5);
   const cmd = global.config.autoPray[ranInt(0, global.config.autoPray.length - 1)];
-  await send(cmd).then(() => global.totalpraycurse++)
+  await send(cmd).then(() => global.totalpraycurse++);
 };
 
 const aChannel = async () => {
@@ -265,8 +265,8 @@ const aGamble = async () => {
   }
 };
 
-const aGem = async (useGem1: boolean, useGem2: boolean, useGem3: boolean) => {
-  log("Run gem function", "a");
+const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean) => {
+  await sleep(ranInt(4800, 6200));
   await send("inv");
   const filter = (msg: Message<boolean>) =>
     msg.author.id == global.owoID &&
@@ -276,28 +276,27 @@ const aGem = async (useGem1: boolean, useGem2: boolean, useGem3: boolean) => {
   collector.once("collect", async (msg) => {
     inv = msg.content.split("`");
     gem1 = inv.filter((elm) => /^05[1-7]$/.test(elm)).map(Number);
-    gem2 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
-    gem3 = inv.filter((elm) => /^07[2-8]$/.test(elm)).map(Number);
+    gem3 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
+    gem4 = inv.filter((elm) => /^07[2-8]$/.test(elm)).map(Number);
     box = global.config.autoCrate != undefined && inv.includes("050");
     if (box) {
       await send("lootbox all");
-      await sleep(ranInt(4800, 6200));
-      return aGem(useGem1, useGem2, useGem3);
+      return aGem(useGem1, useGem3, useGem4);
     }
-    let gem = [...gem1, ...gem2, ...gem3].length;
+    let gem = [...gem1, ...gem3, ...gem4].length;
     log(`Found ${gem} Hunting ${gem > 1 ? "Gems" : "Gem"} in Inventory`, "i");
     if (gem <= 0 && !box) {
-      global.config.autoGem = -1;
+      global.config.autoGem = 0;
       return;
     }
     let ugem1 =
-      useGem1 && gem1.length > 0 ? (global.config.autoGem === 0 ? Math.max(...gem1) : Math.min(...gem1)) : undefined;
-    let ugem2 =
-      useGem2 && gem2.length > 0 ? (global.config.autoGem === 0 ? Math.max(...gem2) : Math.min(...gem2)) : undefined;
+      useGem1 && gem1.length > 0 ? (global.config.autoGem === 1 ? Math.max(...gem1) : Math.min(...gem1)) : undefined;
     let ugem3 =
-      useGem3 && gem3.length > 0 ? (global.config.autoGem === 0 ? Math.max(...gem3) : Math.min(...gem3)) : undefined;
-    if (!ugem1 && !ugem2 && !ugem3) return;
-    await send(`use ${ugem1 ?? ""} ${ugem2 ?? ""} ${ugem3 ?? ""}`.replace(/\s+/g, " "));
+      useGem3 && gem3.length > 0 ? (global.config.autoGem === 1 ? Math.max(...gem3) : Math.min(...gem3)) : undefined;
+    let ugem4 =
+      useGem4 && gem4.length > 0 ? (global.config.autoGem === 1 ? Math.max(...gem4) : Math.min(...gem4)) : undefined;
+    if (!ugem1 && !ugem3 && !ugem4) return;
+    await send(`use ${ugem1 ?? ""} ${ugem3 ?? ""} ${ugem4 ?? ""}`.replace(/\s+/g, " "));
   });
 };
 
@@ -308,7 +307,7 @@ export const main = async () => {
     global.totalbattle++;
     await send("h", "normalCommand");
     global.totalhunt++;
-    if (global.config.autoGem === -1) return;
+    if (global.config.autoGem === 0) return;
     const filter = (msg: Message<boolean>) =>
       msg.author.id == global.owoID &&
       msg.content.includes(msg.guild?.members.me?.displayName!) &&
@@ -317,12 +316,9 @@ export const main = async () => {
     collector.on("collect", async (msg) => {
       let param1: boolean, param2: boolean, param3: boolean;
       param1 = !msg.content.includes("gem1") && (!gem1 || gem1.length > 0);
-      param2 = !msg.content.includes("gem3") && (!gem2 || gem2.length > 0);
-      param3 = !msg.content.includes("gem4") && (!gem3 || gem3.length > 0);
-      if (param1 || param2 || param3) {
-        sleep(5_000);
-        await aGem(param1, param2, param3);
-      }
+      param2 = !msg.content.includes("gem3") && (!gem3 || gem3.length > 0);
+      param3 = !msg.content.includes("gem4") && (!gem4 || gem4.length > 0);
+      if (param1 || param2 || param3) await aGem(param1, param2, param3);
     });
   });
 

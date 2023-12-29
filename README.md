@@ -10,29 +10,33 @@ Please report bugs and keep on track with our announcement!
     Please report if you have any issue/bugs/error while using, I will try my best to help with my responsibility.
 
 ## Requirement
-__Node.js Version:__ v14.0.0 - v18.18.0
+
+**Node.js Version:** v14.0.0 - v18.18.0
 
 For laptop and PC: Windows 8/8.1/10 or higher, Linux and MacOS
 
-For Android: Download and install [Termux](https://f-droid.org/en/packages/com.termux/) 
+For Android: Download and install [Termux](https://f-droid.org/en/packages/com.termux/)
 
 For IOS: Not yet (please tell us if you know any supporting method)
 
-__Note:__ Termux from Google Play Store is unsupported.
+**Note:** Termux from Google Play Store is unsupported.
 
-If you are using Termux and notification via playing music, please download __termux-api__ package to be installed for the `termux-media-player` command to work
+If you are using Termux and notification via playing music, please download **termux-api** package to be installed for the `termux-media-player` command to work
 
 This can be done by running command:
+
 ```bash
 pkg install termux-api
 ```
 
 ## Installation
+
 Please make sure that you have installed [Node.js LTS](https://nodejs.org/en/download) on your devices.
 
 ![Imgur](https://i.imgur.com/swvzF0k.png)
 
 On Termux, run the following commands:
+
 ```bash
 apt update
 apt upgrade
@@ -41,6 +45,7 @@ apt install git
 ```
 
 Download and extract the module or clone/pull it using [Git](https://git-scm.com/downloads):
+
 ```bash
 git clone https://github.com/LongAKolangle/discord-owo-selfbot.git
 ```
@@ -50,13 +55,18 @@ Now [open the terminal inside folder](https://www.groovypost.com/howto/open-comm
 ```bash
 npm install
 ```
+
 This will install all the requirements (libraries) for the selfbot to run correctly.
+
 ## Usage
+
 For running selfbot, please use the following command (inside selfbot folder)
+
 ```bash
 npm start
 ```
-If you see the following warning 
+
+If you see the following warning
 
 ![Imgur](https://i.imgur.com/jSTfrOr.png)
 
@@ -70,22 +80,23 @@ We support 3 ways to login: via token, via QR Code, and via Password
 
 ![Imgur](https://i.imgur.com/UwU9Z9B.png)
 
-### Via token: 
+### Via token:
 
-#### __- Step 1: Get your discord account token__
+#### **- Step 1: Get your discord account token**
 
 Method 1: Follow [this instruction](https://pcstrike.com/how-to-get-discord-token/) to get your account token.
 
-Method 2: Press __Ctrl + Shift + I__ and paste the following function.
+Method 2: Press **Ctrl + Shift + I** and paste the following function.
 
 ```javascript
 window.webpackChunkdiscord_app.push([
   [Math.random()],
   {},
-  req => {
+  (req) => {
+    if (!req.c) return;
     for (const m of Object.keys(req.c)
-      .map(x => req.c[x].exports)
-      .filter(x => x)) {
+      .map((x) => req.c[x].exports)
+      .filter((x) => x)) {
       if (m.default && m.default.getToken !== undefined) {
         return copy(m.default.getToken());
       }
@@ -95,33 +106,38 @@ window.webpackChunkdiscord_app.push([
     }
   },
 ]);
-console.log('%cTOKEN CLAIMED!', 'font-size: 50px');
-console.log(`%cYou now have your token in the clipboard!`, 'font-size: 16px');
+console.log("%cWorked!", "font-size: 50px");
+console.log(`%cYou now have your token in the clipboard!`, "font-size: 16px");
 ```
 
-#### __- Step 2: Simply paste your token into the toolfarm, this will take a while__
+#### **- Step 2: Simply paste your token into the toolfarm, this will take a while**
 
 ![Imgur](https://i.imgur.com/v7LlsSg.png)
 
 ### Via QR Code
+
 Simply scan the QR Code on the screen by your discord mobile and wait patiently...
 
 ![Imgur](https://i.imgur.com/xm8F3Cy.png)
 
 If success, a list of joined servers will be shown up.
 
-__A full tutorial on how to use the selfbot will be uploaded to Youtube soon!__
+**A full tutorial on how to use the selfbot will be uploaded to Youtube soon!**
 
 ### Via Password
 
 Simply submit your Email/Phone Number, Password, MFA Code (Backup/3rd party app Code)
 
-__Note:__ We do __NOT__ support code auth via Phone Number/Email, __ONLY__ Backup / Google Authenticator Code
+**Note:** We do **NOT** support code auth via Phone Number/Email, **ONLY** Backup / Google Authenticator Code
+
 ## Caution
+
 Recently, there have been reports of hacked accounts and lost currency associated with the use of certain tools. For your safety, it is advised to avoid any kind of obfuscated or suspicious code. Prioritize security and exercise caution when using external code or tools. Stay informed, trust reliable sources, and adopt good security practices to protect your accounts and data.
 
 ![Imgur](https://i.imgur.com/dWFr5uv.png)
+
 ## Achievements
+
 ✔ Attempt to solve captcha by using 3rd party captcha-api website
 
 ✔ Solve captcha by DMs selfbot account
@@ -164,7 +180,7 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ✔ Open source
 
-__-- Coming soon list --__
+**-- Coming soon list --**
 
 ⬜ Selfbot captcha solving API (No longer 3rd party)
 
@@ -188,7 +204,6 @@ Your stars inspire us to keep pushing boundaries, overcome challenges, and bring
 
 [![Star History Chart](https://api.star-history.com/svg?repos=LongAKolangle/discord-owo-selfbot&type=Date)](https://star-history.com/#LongAKolangle/discord-owo-selfbot&Date)
 
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
@@ -200,32 +215,33 @@ Please make sure to update tests as appropriate.
 
 ## Contact
 
-__Facebook:__ [Nguyễn Thành Long](https://www.facebook.com/profile.php?id=100026454971591)
+**Facebook:** [Nguyễn Thành Long](https://www.facebook.com/profile.php?id=100026454971591)
 
-__Fanpage:__ [Nong ngoo ở đảo Ngố](https://www.facebook.com/profile.php?id=100086422962104)
+**Fanpage:** [Nong ngoo ở đảo Ngố](https://www.facebook.com/profile.php?id=100086422962104)
 
-__Patreon:__ [Click here!](https://patreon.com/DiscordOwOSelfbot)
+**Patreon:** [Click here!](https://patreon.com/DiscordOwOSelfbot)
 
-__Email:__ ntt.eternity2k6@gmail.com
+**Email:** ntt.eternity2k6@gmail.com
 
-__Join our discord server:__ [Join now](https://discord.gg/Yr92g5Zx3e)
+**Join our discord server:** [Join now](https://discord.gg/Yr92g5Zx3e)
 
     Hello there, my name is Eternityy, and I wanted to take a moment to thank you for using our tool.
 
-    Since 2021, this project has been non-profit. But we're still committed to making it the best it can be, 
-    
+    Since 2021, this project has been non-profit. But we're still committed to making it the best it can be,
+
     With APIs like captcha-solving and quoting,... to help make your experience better and more efficient.
 
-    Unfortunately, funding has become an obstacle to our progress. Would you be willing to help us out with a small donation? 
-    
+    Unfortunately, funding has become an obstacle to our progress. Would you be willing to help us out with a small donation?
+
     Even the price of a coffee cup can go a long way towards keeping us going. Every little bit helps, means the world to us.
 
     Thank you for your time and consideration, and we hope you continue to enjoy our tool!
 
-#### MB Bank Vietnam / Momo / ZaloPay: __NGUYEN THANH LONG__ __0978176370__
+#### MB Bank Vietnam / Momo / ZaloPay: **NGUYEN THANH LONG** **0978176370**
 
 ## Acknowledgments
-__SPECIAL THANKS TO:__
+
+**SPECIAL THANKS TO:**
 
 Aiko-chan-ai
 
@@ -245,6 +261,6 @@ AmiiUwU
 
 💖 Made by Vietnamese with love
 
-💫 We are BKI members (Baka Island - 💪Đảo Ngố Tàu) 
+💫 We are BKI members (Baka Island - 💪Đảo Ngố Tàu)
 
-__Tag:__ Discord selfbot, OwO selfbot, Tool Farm OwO, Advanced OwO Selfbot, Selfbot Farm OwO, Discord OwO bot selfbot, Discord OwO selfbot, etc.
+**Tag:** Discord selfbot, OwO selfbot, Tool Farm OwO, Advanced OwO Selfbot, Selfbot Farm OwO, Discord OwO bot selfbot, Discord OwO selfbot, etc.

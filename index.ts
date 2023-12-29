@@ -20,6 +20,7 @@ export const global = {
     totalhunt: 0,
     totalowo: 0,
     totalring: 0,
+    totalpraycurse: 0,
     totaltxt: 0,
     prefix: ['h']
 } as Tool
