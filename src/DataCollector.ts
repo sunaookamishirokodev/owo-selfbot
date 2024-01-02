@@ -13,35 +13,38 @@ import { getResult, trueFalse, log } from "./Console.js";
 import { global } from "../index.js";
 
 const supportedAudioExtensions = [".wav", ".mp3", ".m4a", ".flac", ".ogg", "aac"];
-const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai. All rights reserved.\nFrom Github with ❤️\nBy using this module, you agree to our Terms of Use and accept any associated risks.\nPlease note that we do not take any responsibility for accounts being banned due to the use of our tools.`;
+const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai and upgrade by Sunaookami Shiroko. All rights reserved.\nFrom Github with ❤️\nBy using this module, you agree to our Terms of Use and accept any associated risks.\nPlease note that we do not take any responsibility for accounts being banned due to the use of our tools.`;
 
 let client: Client<boolean>,
   guildID: string,
   channelID: string[],
   waynotify: number[],
   webhookURL: string,
-  autopray: string[],
+  autoPray: string,
+  autoPrayUser: string,
   usernotify: string,
   musicPath: string,
   solveCaptcha: number,
   apiuser: string,
   apikey: string,
-  prefix: string,
+  cmdPrefix: string,
+  botPrefix: string,
   apilink: string,
+  otherCmd: string,
   autogem: number,
-  autocrate: boolean = false,
-  autoquote: boolean,
-  autoreload: boolean,
-  autosleep: boolean,
-  autoresume: boolean,
-  autoslash: boolean,
-  autoother: boolean,
-  autodaily: boolean,
-  autosell: boolean,
-  autohunt: boolean,
+  gemType: string[],
+  useSpecialGem: boolean = false,
+  autoCrate: boolean = false,
+  autoQuote: boolean,
+  autoOwO: boolean = true,
+  autoReload: boolean,
+  autoSleep: boolean,
+  autoResume: boolean,
+  autoDaily: boolean,
+  autoSell: string[],
+  autoHunt: boolean,
   upgradetrait: number,
-  autogamble: string[],
-  gamblingAmount: string;
+  autoSac: string[];
 
 const listAccount = (data: { [key: string]: Configuration }) => {
   return new InquirerListQuestion<{ answer: string }>({
@@ -253,19 +256,31 @@ const apiKey = (cache?: string) => {
   });
 };
 
-const apiNCAI = (cache?: string) => {
+// const apiNCAI = (cache?: string) => {
+//   return new InquirerInputQuestion<{ answer: string }>({
+//     type: "input",
+//     message: "[BETA] Enter your NoCaptchaAI API Key, Empty to skip",
+//     validate: (answer: string) => {
+//       if (!answer) return true;
+//       return /^\S+$/.test(answer) ? true : "Invalid API Key";
+//     },
+//     default: cache,
+//   });
+// };
+
+const owoPrefix = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({
     type: "input",
-    message: "[BETA] Enter your NoCaptchaAI API Key, Empty to skip",
+    message: "Enter your OwO prefix: ",
     validate: (answer: string) => {
       if (!answer) return true;
-      return /^\S+$/.test(answer) ? true : "Invalid API Key";
+      return /^[^0-9\s]{1,5}$/.test(answer) ? true : "Invalid Prefix";
     },
-    default: cache,
+    default: cache ?? "owo",
   });
 };
 
-const botPrefix = (cache?: string) => {
+const userPrefix = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({
     type: "input",
     message: "[BETA] Enter your Selfbot Prefix, Empty to skip",
@@ -273,6 +288,14 @@ const botPrefix = (cache?: string) => {
       if (!answer) return true;
       return /^[^0-9\s]{1,5}$/.test(answer) ? true : "Invalid Prefix";
     },
+    default: cache,
+  });
+};
+
+const otherCommand = (cache?: string) => {
+  return new InquirerInputQuestion<{ answer: string }>({
+    type: "input",
+    message: "Enter other command you want to send, Empty to skip",
     default: cache,
   });
 };
@@ -290,20 +313,49 @@ const gemOrder = (cache?: number) => {
   });
 };
 
-const prayCurse = (cache?: string[]) => {
-  return new InquirerCheckboxQuestion<{ answer: string[] }>({
-    type: "checkbox",
-    message: "Select to pray or curse (randomly if multiple), empty to skip",
+const prayCurse = (cache?: string) => {
+  return new InquirerListQuestion<{ answer: string }>({
+    type: "list",
+    message: "Select to pray or curse (user)",
     choices: [
-      { name: "Pray selfbot account", value: `pray` },
-      { name: "Curse selfbot account", value: `curse` },
-      ...(usernotify
-        ? [
-            { name: "Pray notification reception", value: `pray ${usernotify}` },
-            { name: "Curse notification reception", value: `curse ${usernotify}` },
-          ]
-        : []),
+      { name: "Skip", value: `skip` },
+      { name: "Pray", value: `pray` },
+      { name: "Curse", value: `curse` },
     ],
+    default: cache,
+  });
+};
+
+const prayCurseUser = (cache?: string) => {
+  return new InquirerInputQuestion<{ answer: string }>({
+    type: "input",
+    message: "Enter your friend you want to pray/curse, empty to skip",
+    validate: async (answer: string) => {
+      if (!answer) return true;
+      if (answer == client.user?.id) return "Selfbot ID is not valid for Call/DMs option";
+      const target = client.users.cache.get(answer);
+      if (!target) return "User not found!";
+      switch (target.relationships.toString()) {
+        case "FRIEND":
+          return true;
+        case "PENDING_INCOMING":
+          try {
+            await target.setFriend();
+            return true;
+          } catch (error) {
+            return "Could not accept user's friend request!";
+          }
+        case "PENDING_OUTGOING":
+          return "Please accept selfbot's friend request!";
+        default:
+          try {
+            await target.sendFriendRequest();
+            return "Please accept selfbot's friend request!";
+          } catch (error) {
+            return "Could not send friend request to user!";
+          }
+      }
+    },
     default: cache,
   });
 };
@@ -311,8 +363,9 @@ const prayCurse = (cache?: string[]) => {
 const huntBot = (cache?: number) => {
   return new InquirerListQuestion<{ answer: number }>({
     type: "list",
-    message: "Select which huntbot trait to upgrade, empty to skip",
+    message: "Select which huntbot trait to upgrade",
     choices: [
+      { name: "Skip", value: 0 },
       { name: "Efficiency", value: 1 },
       { name: "Duration", value: 2 },
       { name: "Cost", value: 3 },
@@ -324,23 +377,33 @@ const huntBot = (cache?: number) => {
   });
 };
 
-const Gamble = (cache?: string[]) => {
+const rate = (msg?: string, cache?: string[], isPet: boolean = false, isRequire: boolean = false) => {
   return new InquirerCheckboxQuestion<{ answer: string[] }>({
     type: "checkbox",
-    message: "Select which gambling method to use, empty to skip",
-    choices: ["Blackjack", "Slots", "Coinflip", "Lottery"],
-    default: cache,
-  });
-};
-
-const gambleAmount = (cache?: string) => {
-  return new InquirerInputQuestion<{ answer: string }>({
-    type: "input",
-    message: "Enter the amount of cowoncy to gamble",
-    validate: (input) => {
-      return /^\d+$/.test(input) ?? "Invalid cowoncy balance";
+    message: msg + (isRequire ? ", empty to skip" : ""),
+    choices: [
+      { name: "Common", value: "common" },
+      { name: "Uncommon", value: "uncommon" },
+      { name: "Rare", value: "rare" },
+      { name: "Epic", value: "epic" },
+      { name: "Mythical", value: "mythical" },
+      { name: "Legendary", value: "legendary" },
+      { name: "Fabled", value: "fabled" },
+      ...(isPet
+        ? [
+            { name: "Special", value: "special" },
+            { name: "Gem", value: "gem" },
+            { name: "Distorted", value: "distorted" },
+            { name: "Patreon", value: "patreon" },
+            { name: "Cpatreon", value: "cpatreon" },
+          ]
+        : []),
+    ],
+    validate: (answer: string[]) => {
+      if (!isRequire) return true;
+      else return answer.length === 0 ? "You need to select at least one value" : true;
     },
-    default: cache ?? "1",
+    default: cache,
   });
 };
 
@@ -404,23 +467,33 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
       apiKey(cache?.apiKey),
       'Head To This Website And SignUp/SignIn. Then Copy The \x1b[1m"API Key"\x1b[0m Value in Account Settings On [Dashboard Tab] And Paste It Here\nLink: https://2captcha.com/enterpage'
     );
-  prefix = await getResult(botPrefix(cache?.cmdPrefix));
-  autopray = await getResult(prayCurse(cache?.autoPray));
+  botPrefix = await getResult(owoPrefix(cache?.botPrefix));
+  cmdPrefix = await getResult(userPrefix(cache?.cmdPrefix));
+  otherCmd = await getResult(otherCommand(cache?.otherCmd));
+  autoPray = await getResult(prayCurse(cache?.autoPray));
+  if (autoPray !== "skip") autoPrayUser = await getResult(prayCurseUser(cache?.autoPrayUser));
   autogem = await getResult(gemOrder(cache?.autoGem));
-  if (autogem > 0) autocrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate));
+  if (autogem > 0) {
+    gemType = await getResult(rate("Select which gem you want to use", cache?.gemType, false, true));
+    useSpecialGem = await getResult(trueFalse("Toggle Automatically use Special Gem", cache?.useSpecialGem));
+    autoCrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate));
+  }
   if (solveCaptcha != 0)
-    autohunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt));
-  if (autohunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
-  autogamble = await getResult(Gamble(cache?.autoGamble));
-  if (autogamble.length > 0) gamblingAmount = await getResult(gambleAmount(cache?.gamblingAmount));
-  autoquote = await getResult(trueFalse("Toggle Automatically send owo/quotes to level up", cache?.autoQuote));
-  autoslash = await getResult(trueFalse("Toggle Automatically use slash commands", cache?.autoSlash));
-  autoother = await getResult(trueFalse("Toggle Automatically send Run/Pup/Piku commands", cache?.autoOther));
-  autodaily = await getResult(trueFalse("Toggle Automatically claim daily reward", cache?.autoDaily));
-  autosell = await getResult(trueFalse("Toggle Automatically sell animals once cash runs out", cache?.autoSell));
-  autosleep = await getResult(trueFalse("Toggle Automatically pause after times", cache?.autoSleep));
-  autoreload = await getResult(trueFalse("Toggle Automatically reload configuration on new day", cache?.autoReload));
-  autoresume = await getResult(trueFalse("Toggle Automatically resume after captcha is solved", cache?.autoResume));
+    autoHunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt));
+  if (autoHunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
+  if (upgradetrait !== 0)
+    autoSac = await getResult(rate("Select which type of pet(s) you want to sacrifice", cache?.autoSac, true));
+  autoQuote = await getResult(trueFalse("Toggle Automatically send quotes to level up", cache?.autoQuote));
+  autoOwO = await getResult(trueFalse("Toggle Automatically send owo/uwu to level up", cache?.autoOwO));
+  autoDaily = await getResult(trueFalse("Toggle Automatically claim daily reward", cache?.autoDaily));
+  autoSell = await getResult(
+    rate("Select which pet(s) you want to sell when run out of cowoncy", cache?.autoSell, true)
+  );
+  autoSleep = await getResult(
+    trueFalse("Toggle Automatically pause after times (RECOMMEND turn on!!)", cache?.autoSleep)
+  );
+  autoReload = await getResult(trueFalse("Toggle Automatically reload configuration on new day", cache?.autoReload));
+  autoResume = await getResult(trueFalse("Toggle Automatically resume after captcha is solved", cache?.autoResume));
   const conf = resolveData(
     `${client.user?.displayName}`,
     client.token!,
@@ -434,22 +507,25 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     apiuser,
     apikey,
     apilink,
-    prefix,
-    autopray,
+    botPrefix,
+    cmdPrefix,
+    autoPray,
+    autoPrayUser,
     autogem,
-    autocrate,
-    autohunt,
+    gemType,
+    useSpecialGem,
+    autoCrate,
+    autoHunt,
     upgradetrait,
-    autogamble,
-    gamblingAmount,
-    autoslash,
-    autoquote,
-    autodaily,
-    autosell,
-    autoother,
-    autosleep,
-    autoreload,
-    autoresume
+    autoSac,
+    autoQuote,
+    autoOwO,
+    autoDaily,
+    autoSell,
+    otherCmd,
+    autoSleep,
+    autoReload,
+    autoResume
   );
   data[`${client.user?.id}`] = conf;
   fs.writeFileSync(global.DataPath, JSON.stringify(data));

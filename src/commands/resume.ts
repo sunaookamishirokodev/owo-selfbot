@@ -7,7 +7,6 @@ export default {
     callback: (message:Message, ...args:string[]) => {
         if(global.paused) {
             global.paused = false
-            global.captchaDetected = false
             message.reply("Tool is resume!")
             main()
         } else message.reply(

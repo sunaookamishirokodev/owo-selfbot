@@ -25,26 +25,34 @@ const sleep = (ms: number) => {
 
 const timeHandler = (startTime: number, endTime: number, removeDay = false) => {
   const ms = Math.abs(startTime - endTime);
-  const sc = Math.round((((ms % 86400000) % 3600000) % 60000) / 1000);
-  const mn = Math.floor(((ms % 86400000) % 3600000) / 60000);
-  const hr = Math.floor((ms % 86400000) / 3600000);
+  const sc = Math.round((((ms % 86400000) % 3600000) % 60000) / 1000)
+    .toString()
+    .padStart(2, "0");
+  const mn = Math.floor(((ms % 86400000) % 3600000) / 60000)
+    .toString()
+    .padStart(2, "0");
+  const hr = Math.floor((ms % 86400000) / 3600000)
+    .toString()
+    .padStart(2, "0");
   const dy = Math.floor(ms / 86400000);
   return (removeDay ? "" : dy + (dy > 1 ? " days " : " day ")) + hr + ":" + mn + ":" + sc;
 };
 
 const consoleNotify = async () => {
   console.log("\n");
-  console.log("\x1b[92mTotal battle sent: \x1b[0m" + global.totalbattle);
-  console.log("\x1b[92mTotal hunt sent: \x1b[0m" + global.totalhunt);
-  console.log("\x1b[92mTotal owo sent: \x1b[0m" + global.totalowo);
-  console.log("\x1b[92mTotal ring sent: \x1b[0m" + global.totalring);
-  console.log("\x1b[92mTotal pray/curse sent: \x1b[0m" + global.totalpraycurse);
-  console.log("\x1b[92mTotal text sent: \x1b[0m" + global.totaltxt);
+  console.log("\x1b[92mTotal battle(s) sent: \x1b[0m" + global.totalbattle);
+  console.log("\x1b[92mTotal hunt(s) sent: \x1b[0m" + global.totalhunt);
+  console.log("\x1b[92mTotal owo(s)/uwu(s) sent: \x1b[0m" + global.totalowo);
+  console.log("\x1b[92mTotal quote(s) sent: \x1b[0m" + global.totaltxt);
+  console.log("\x1b[92mTotal other command(s) sent: \x1b[0m" + global.totalOtherCmd);
+  console.log(
+    `\x1b[92mTotal pray(s)/curse(s) ${global.config.autoPrayUser ?? "your self"} sent: \x1b[0m` + global.totalpraycurse
+  );
   console.log("\x1b[92mTotal active time: \x1b[0m" + timeHandler(global.startTime, Date.now()));
   console.log("\x1b[36mSELFBOT HAS BEEN TERMINATED!\x1b[0m");
 };
 
-const send = async (str: string, type: "normalCommand" | "slashCommand" | "quote" | "non-prefix" = "normalCommand") => {
+const send = async (str: string, type: "normalCommand" | "quote" | "non-prefix" = "normalCommand") => {
   if (global.captchaDetected) return;
   try {
     global.channel.sendTyping();
@@ -53,34 +61,26 @@ const send = async (str: string, type: "normalCommand" | "slashCommand" | "quote
       case "quote":
         global.channel.send(str);
         global.totaltxt++;
+        log(str.slice(0, 25) + "...", "s");
         break;
       case "normalCommand":
-        const cmd = global.prefix[ranInt(0, global.prefix.length)] + str;
+        const cmd = global.config.botPrefix + str;
         global.channel.send(cmd);
         log(cmd);
         break;
-      case "slashCommand":
-        await global.channel.sendSlash(global.owoID, str);
-        log("/" + str);
-        global.slashError = 0;
-        break;
       case "non-prefix":
         await global.channel.send(str);
-        log(str);
+        log(str.slice(0, 25), 's');
+        break;
     }
   } catch (error) {
     const typeError =
       type == "normalCommand"
         ? "Failed To Send OwO Command"
-        : type == "slashCommand"
-        ? "Failed To Send Slash Command"
+        : type == "non-prefix"
+        ? "Failed To Send Non Prefix Command"
         : "Failed To Send Quote";
     log(typeError, "e");
-    if (type == "slashCommand") global.slashError++;
-    if (global.slashError > 3) {
-      global.config.autoSlash = false;
-      log("Slash Command has been Disabled Due to Too Many Errors", "i");
-    }
   }
 };
 

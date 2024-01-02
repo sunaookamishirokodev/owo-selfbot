@@ -175,8 +175,6 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ✔ Automatic check for update
 
-✔ Clean code
-
 ✔ Open source
 
 **-- Coming soon list --**
@@ -185,6 +183,8 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ⬜ Huntbot captcha solving API (No longer 3rd party)
 
+⬜ Clean code
+
 ⬜ HCaptcha solving (in testing)
 
 ⬜ Automatic vote OwO on top.gg (in testing)
@@ -192,6 +192,7 @@ Recently, there have been reports of hacked accounts and lost currency associate
 ⬜ Automatic claim/handle quest and checklog
 
 ⬜ Application with UI support
+
 
 ## Sparkling Soul
 

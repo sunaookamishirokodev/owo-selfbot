@@ -1,11 +1,11 @@
 {
-  "name": "discord-owo-selfbot",
-  "version": "2.2.6",
+  "name": "owo-selfbot",
+  "version": "3.0.0",
   "description": "Ain't the best OwO Tool Farm, but worth a try (why not?)",
   "type": "module",
   "exports": "./dist/index.js",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LongAKolangle/discord-owo-selfbot.git"
+    "url": "git+https://github.com/sunaookamishirokodev/owo-selfbot-2.git"
   },
   "keywords": [
     "discord",
@@ -23,16 +23,14 @@
     "owotoolfarm",
     "discord-owo-selfbot",
     "selfbot",
-    "free-owo-selfbot",
-    "free-owo-toolfarm",
     "owo-tool-farm"
   ],
-  "author": "Eternityyy",
+  "author": "Sunaookami Shiroko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LongAKolangle/discord-owo-selfbot/issues"
+    "url": "https://github.com/sunaookamishirokodev/owo-selfbot-2/issues"
   },
-  "homepage": "https://github.com/LongAKolangle/discord-owo-selfbot#readme",
+  "homepage": "https://github.com/sunaookamishirokodev/owo-selfbot-2#readme",
   "dependencies": {
     "2captcha": "^3.0.7",
     "adm-zip": "^0.5.10",
