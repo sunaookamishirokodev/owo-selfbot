@@ -98,7 +98,6 @@ interface Configuration {
 
 interface Tool {
   owoID: string;
-  FolderPath: string;
   DataPath: string;
   startTime: number;
   lastTime?: number;

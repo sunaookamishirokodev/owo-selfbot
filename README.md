@@ -10,7 +10,7 @@ Please report bugs and keep on track with our announcement!
 
 ## Requirement
 
-**Node.js Version:** > v14.0.0
+**Node.js Version:** > v18.0.0
 
 For laptop and PC: Windows 8/8.1/10 or higher, Linux and MacOS
 
@@ -46,7 +46,7 @@ On Termux, run the following commands:
 Download and extract the module or clone/pull it using [Git](https://git-scm.com/downloads):
 
 ```bash
-git clone https://github.com/sunaookamishirokodev/owo-selfbot-2.git
+git clone https://github.com/sunaookamishirokodev/owo-selfbot.git
 ```
 
 Now [open the terminal inside folder](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) where you downloaded the selfbot and run the following command:
@@ -111,13 +111,13 @@ console.log(`%cYou now have your token in the clipboard!`, "font-size: 16px");
 
 #### **- Step 2: Simply paste your token into the toolfarm, this will take a while**
 
-![Imgur](https://i.imgur.com/v7LlsSg.png)
+![DiscordImage](https://media.discordapp.net/attachments/1177740615123992747/1191604288175226960/image.png?ex=65a60af9&is=659395f9&hm=93f186f96c8dbca8b08df618f219c7aaf670430d39c860de4adc0087f8739972&=&format=png&quality=high&width=825&height=208)
 
 ### Via QR Code
 
 Simply scan the QR Code on the screen by your discord mobile and wait patiently...
 
-![Imgur](https://i.imgur.com/xm8F3Cy.png)
+![DiscordImage](https://cdn.discordapp.com/attachments/1177740615123992747/1191604935922565140/image.png?ex=65a60b93&is=65939693&hm=eccb83f429c1ed5b064106567b73e42c4769fd625cfaaa9beed52520b8914252&)
 
 If success, a list of joined servers will be shown up.
 
@@ -141,8 +141,6 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ✔ Solve captcha by DMs selfbot account
 
-✔ Use Slash Command
-
 ✔ Selfbot Commands
 
 ✔ Send notification via webhook/DMs/Call
@@ -159,19 +157,17 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ✔ Automatic resume on captcha solved
 
-✔ Automatic loot boxes and use gems
-
-✔ Automatic run/pup/piku randomly
+✔ Automatic loot boxes and use gems (special gems)
 
 ✔ Automatic claim daily reward
 
 ✔ Automatic sell animals once cash runs out
 
-✔ Automatic reload configuration daily
-
-✔ Automatic gamble (blackjack/slot/coinflip)
+✔ Automatic sacrifice animals when running huntbot
 
 ✔ Automatic send/receive, upgrade trait huntbot
+
+✔ Automatic reload configuration daily
 
 ✔ Automatic check for update
 
@@ -192,7 +188,6 @@ Recently, there have been reports of hacked accounts and lost currency associate
 ⬜ Automatic claim/handle quest and checklog
 
 ⬜ Application with UI support
-
 
 ## Sparkling Soul
 

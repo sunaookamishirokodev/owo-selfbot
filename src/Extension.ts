@@ -177,8 +177,8 @@ const reloadPresence = (client: discord.Client) => {
   client.user?.setStatus("dnd");
 };
 
-const solveCaptcha = async (url?: string, huntbotCaptcha = false) => {
-  if (url && !huntbotCaptcha) {
+const solveCaptcha = async (url?: string) => {
+  if (url) {
     const response = await axios.get(url, {
       responseType: "arraybuffer",
       headers: {
@@ -209,7 +209,6 @@ const solveCaptcha = async (url?: string, huntbotCaptcha = false) => {
         if (res) resolve(res.data);
       });
     }
-  } else if (url && huntbotCaptcha) {
   }
 };
 
@@ -231,11 +230,11 @@ const manualUpdate = async () => {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537",
     };
-    const res = await axios.get(`https://github.com/LongAKolangle/discord-owo-selfbot/archive/master.zip`, {
+    const res = await axios.get(`https://github.com/sunaookamishirokodev/owo-selfbot/archive/master.zip`, {
       responseType: "arraybuffer",
       headers,
     });
-    const updatePath = path.resolve(global.FolderPath, "updateCache.zip");
+    const updatePath = path.resolve("/", "updateCache.zip");
     fs.writeFileSync(updatePath, res.data);
 
     const zip = new admZip(updatePath);
@@ -256,7 +255,7 @@ const checkUpdate = async () => {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537",
     };
     const response = await axios.get(
-      `https://raw.githubusercontent.com/LongAKolangle/discord-owo-selfbot/main/package.json`,
+      `https://raw.githubusercontent.com/sunaookamishirokodev/owo-selfbot/main/package.json`,
       {
         headers,
       }
