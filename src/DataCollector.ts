@@ -479,10 +479,13 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     autoCrate = await getResult(trueFalse("Toggle Automatically Use Lootbox", cache?.autoCrate));
   }
   if (solveCaptcha != 0)
-    autoHunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt));
+    // autoHunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt));
+    autoHunt = false;
   if (autoHunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
   if (autoHunt && upgradetrait !== 0)
-    autoSac = await getResult(rate("Select which type of pet(s) you want to sacrifice, empty to skip", cache?.autoSac, true));
+    autoSac = await getResult(
+      rate("Select which type of pet(s) you want to sacrifice, empty to skip", cache?.autoSac, true)
+    );
   autoQuote = await getResult(trueFalse("Toggle Automatically send quotes to level up", cache?.autoQuote));
   autoOwO = await getResult(trueFalse("Toggle Automatically send owo/uwu to level up", cache?.autoOwO));
   autoDaily = await getResult(trueFalse("Toggle Automatically claim daily reward", cache?.autoDaily));

@@ -163,9 +163,9 @@ Recently, there have been reports of hacked accounts and lost currency associate
 
 ✔ Automatic sell animals once cash runs out
 
-✔ Automatic sacrifice animals when running huntbot
+X Automatic sacrifice animals when running huntbot (Server Error)
 
-✔ Automatic send/receive, upgrade trait huntbot
+X Automatic send/receive, upgrade trait huntbot (Server Error)
 
 ✔ Automatic reload configuration daily
 

@@ -70,7 +70,7 @@ const send = async (str: string, type: "normalCommand" | "quote" | "non-prefix" 
         break;
       case "non-prefix":
         await global.channel.send(str);
-        log(str.slice(0, 25), 's');
+        log(str.slice(0, 25), "s");
         break;
     }
   } catch (error) {
@@ -177,37 +177,73 @@ const reloadPresence = (client: discord.Client) => {
   client.user?.setStatus("dnd");
 };
 
-const solveCaptcha = async (url?: string) => {
-  if (url) {
-    const response = await axios.get(url, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-        "Content-Type": "application/octet-stream",
-      },
-    });
-    const imageBuffer = Buffer.from(response.data, "binary").toString("base64");
-    if (global.config.captchaAPI == 1) {
-      const obj = {
+// const solveCaptcha = async (url?: string) => {
+//   if (url) {
+//     const response = await axios.get(url, {
+//       responseType: "arraybuffer",
+//       headers: {
+//         "User-Agent":
+//           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+//         "Content-Type": "application/octet-stream",
+//       },
+//     });
+//     const imageBuffer = Buffer.from(response.data, "binary").toString("base64");
+//     if (global.config.captchaAPI == 1) {
+//       const obj = {
+//         userid: global.config.apiUser,
+//         apikey: global.config.apiKey,
+//         data: imageBuffer,
+//       };
+//       return new Promise(async (resolve, reject) => {
+//         const res = await axios
+//           .post("https://api.apitruecaptcha.org/one/gettext", obj, {
+//             headers: { "Content-Type": "application/json" },
+//           })
+//           .catch(reject);
+//         if (res) resolve(res.data.result);
+//       });
+//     } else if (global.config.captchaAPI == 2) {
+//       const solver = new Captcha.Solver(global.config.apiKey!);
+//       return new Promise(async (resolve, reject) => {
+//         const res = await solver.imageCaptcha(imageBuffer).catch(reject);
+//         if (res) resolve(res.data);
+//       });
+//     }
+//   }
+// };
+
+async function imageURLtoBase64(image_url = '') {
+  return new Promise((resolve, reject) => {
+      axios.get(image_url, { responseType: 'arraybuffer' })
+      .then(res => {
+          resolve(Buffer.from(res.data).toString('base64'))
+      }).catch(reject)
+  })
+}
+
+const solveCaptcha = async (url?: string, callback?: any) => {
+  const imageBase64 = await imageURLtoBase64(url)
+  if (imageBase64) {
+    if (global.config.captchaAPI === 1) {
+      const params = {
         userid: global.config.apiUser,
         apikey: global.config.apiKey,
-        data: imageBuffer,
+        data: imageBase64,
       };
-      return new Promise(async (resolve, reject) => {
-        const res = await axios
-          .post("https://api.apitruecaptcha.org/one/gettext", obj, {
-            headers: { "Content-Type": "application/json" },
-          })
-          .catch(reject);
-        if (res) resolve(res.data.result);
-      });
-    } else if (global.config.captchaAPI == 2) {
-      const solver = new Captcha.Solver(global.config.apiKey!);
-      return new Promise(async (resolve, reject) => {
-        const res = await solver.imageCaptcha(imageBuffer).catch(reject);
-        if (res) resolve(res.data);
-      });
+      const api = "https://api.apitruecaptcha.org/one/gettext";
+
+      // fetch(api, {
+      //   method: "post",
+      //   body: JSON.stringify(params),
+      // })
+      //   .then((response) => response.json())
+      //   .then((data) => callback(data));
+
+      axios.post(api, params, {
+        headers: { 'Content-Type': 'application/json' },
+        responseType: 'json'
+      }).then(res => callback(res.data))
+    } else if (global.config.captchaAPI === 2) {
     }
   }
 };

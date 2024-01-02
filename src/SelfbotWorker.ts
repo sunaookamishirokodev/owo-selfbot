@@ -137,18 +137,16 @@ export const aHuntbot = async () => {
       return;
     }
 
-    if (!isSac && global.config.autoSac.length !== 0) {
+    if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
       await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
-      console.log(!isSac);
       isSac = true;
       return aHuntbot();
     }
 
     if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
       // nâng cấp
-      console.log("upgrade trait");
       const trait = embed.fields[global.config.upgradeTrait].value;
-      if (trait.includes(`\`[MAX]\``)) {
+      if (trait.includes(`[MAX]`)) {
         // nếu max thì bỏ qua
         global.config.upgradeTrait = 0;
         return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
@@ -190,9 +188,7 @@ export const aHuntbot = async () => {
       }
     }
 
-    console.log(timeoutHuntbot);
-
-    send("hb 1");
+    await send("hb 1");
     global.channel
       .createMessageCollector({
         filter: (msg) =>
@@ -203,34 +199,38 @@ export const aHuntbot = async () => {
         max: 1,
         time: 15_000,
       })
-      .once("collect", async (msg) => {
+      .on("collect", async (msg: Message) => {
+        if (!msg) aHuntbot();
         const imageUrl = msg.attachments.first()?.url;
         if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
-        const answer = (await solveCaptcha(imageUrl)) as string | undefined;
-        if (!answer || /\d/.test(answer)) {
-          throw new Error(
-            answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
-          );
-        }
-        send(`hb 24h ${answer}`);
-        global.channel
-          .createMessageCollector({
-            filter: (_msg) =>
-              _msg.author.id === global.owoID && msg.content.includes(msg.guild?.members.me?.displayName!),
-            max: 1,
-            time: 15_000,
-          })
-          .once("collect", async (_msg) => {
-            if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
-              setTime(_msg.content);
-              if (timeoutHuntbot) {
-                const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
-                timeHandler(0, timeDiff, true);
+        await solveCaptcha(imageUrl, async (data: string) => {
+          const answer = data;
+          console.log(answer)
+          if (!answer || /\d/.test(answer)) {
+            throw new Error(
+              answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
+            );
+          }
+          await send(`hb 24h ${answer}`);
+          global.channel
+            .createMessageCollector({
+              filter: (_msg) =>
+                _msg.author.id === global.owoID && msg.content.includes(msg.guild?.members.me?.displayName!),
+              max: 1,
+              time: 15_000,
+            })
+            .once("collect", async (_msg) => {
+              if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
+                setTime(_msg.content);
+                if (timeoutHuntbot) {
+                  const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
+                  timeHandler(0, timeDiff, true);
+                }
+              } else {
+                log("I have error when solve password of huntbot!!", "e");
               }
-            } else {
-              log("I have error when solve password of huntbot!!", "e");
-            }
-          });
+            });
+        });
       });
   });
 };
@@ -491,7 +491,7 @@ export const main = async () => {
       action: aPray,
     },
     { condition: global.config.autoDaily, action: aDaily },
-    { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
+    // { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
     { condition: global.config.autoSleep && global.totalbattle + global.totalhunt > timeoutShift, action: aSleep },
     {
       condition: global.config.channelID.length > 1 && global.totalbattle + global.totalhunt > timeoutChannel,
