@@ -329,7 +329,7 @@ const prayCurse = (cache?: string) => {
 const prayCurseUser = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({
     type: "input",
-    message: "Enter your friend you want to pray/curse, empty to skip",
+    message: "Enter your friend you want to pray/curse, empty to pray/curse your self",
     validate: async (answer: string) => {
       if (!answer) return true;
       if (answer == client.user?.id) return "Selfbot ID is not valid for Call/DMs option";
@@ -481,8 +481,8 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
   if (solveCaptcha != 0)
     autoHunt = await getResult(trueFalse("Toggle Automatically send/receive AutoHunt/Huntbot", cache?.autoHunt));
   if (autoHunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
-  if (upgradetrait !== 0)
-    autoSac = await getResult(rate("Select which type of pet(s) you want to sacrifice", cache?.autoSac, true));
+  if (autoHunt && upgradetrait !== 0)
+    autoSac = await getResult(rate("Select which type of pet(s) you want to sacrifice, empty to skip", cache?.autoSac, true));
   autoQuote = await getResult(trueFalse("Toggle Automatically send quotes to level up", cache?.autoQuote));
   autoOwO = await getResult(trueFalse("Toggle Automatically send owo/uwu to level up", cache?.autoOwO));
   autoDaily = await getResult(trueFalse("Toggle Automatically claim daily reward", cache?.autoDaily));
