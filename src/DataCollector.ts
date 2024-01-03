@@ -380,7 +380,7 @@ const huntBot = (cache?: number) => {
 const rate = (msg?: string, cache?: string[], isPet: boolean = false, isRequire: boolean = false) => {
   return new InquirerCheckboxQuestion<{ answer: string[] }>({
     type: "checkbox",
-    message: msg + (isRequire ? ", empty to skip" : ""),
+    message: msg + (!isRequire ? ", empty to skip" : ""),
     choices: [
       { name: "Common", value: "common" },
       { name: "Uncommon", value: "uncommon" },
@@ -484,7 +484,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
   if (autoHunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
   if (autoHunt && upgradetrait !== 0)
     autoSac = await getResult(
-      rate("Select which type of pet(s) you want to sacrifice, empty to skip", cache?.autoSac, true)
+      rate("Select which type of pet(s) you want to sacrifice", cache?.autoSac, true)
     );
   autoQuote = await getResult(trueFalse("Toggle Automatically send quotes to level up", cache?.autoQuote));
   autoOwO = await getResult(trueFalse("Toggle Automatically send owo/uwu to level up", cache?.autoOwO));

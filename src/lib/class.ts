@@ -102,6 +102,7 @@ interface Tool {
   startTime: number;
   lastTime?: number;
   reloadTime?: number;
+  error?: string[];
   totalhunt: number;
   totalbattle: number;
   totalowo: number;

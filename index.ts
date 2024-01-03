@@ -82,26 +82,28 @@ process.on("SIGINT", async () => {
             log("Captcha Image Found!", "i");
             const imageUrl = message.attachments.first()?.url;
             if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
-            const answer = (await solveCaptcha(imageUrl)) as string | undefined;
-            if (!answer || /\d/.test(answer))
-              throw new Error(
-                answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
-              );
-            const owo = message.client.users.cache.get(global.owoID);
-            if (!owo?.dmChannel) await owo?.createDM();
-            if (!owo || !owo.dmChannel) throw new Error("Could Not Reach OwO DM Channel");
-            owo.dmChannel.sendTyping();
-            await sleep(ranInt(3200, 12000));
-            await owo.send(answer);
-            const collector = owo.dmChannel.createMessageCollector({
-              filter: (msg: Message<boolean>) =>
-                msg.author.id == global.owoID && /verified that you are.{1,3}human!/gim.test(msg.content),
-              max: 1,
-              time: 15_000,
-            });
-            collector.once("collect", () => selfbotNotify(message));
-            collector.once("end", (collection) => {
-              if (Object.keys(collection).length == 0) throw new Error("Captcha Answer Sent but Got No Response");
+            await solveCaptcha(imageUrl, async (data: string) => {
+              const answer = data;
+              if (!answer || /\d/.test(answer))
+                throw new Error(
+                  answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
+                );
+              const owo = message.client.users.cache.get(global.owoID);
+              if (!owo?.dmChannel) await owo?.createDM();
+              if (!owo || !owo.dmChannel) throw new Error("Could Not Reach OwO DM Channel");
+              owo.dmChannel.sendTyping();
+              await sleep(ranInt(3200, 12000));
+              await owo.send(answer);
+              const collector = owo.dmChannel.createMessageCollector({
+                filter: (msg: Message<boolean>) =>
+                  msg.author.id == global.owoID && /verified that you are.{1,3}human!/gim.test(msg.content),
+                max: 1,
+                time: 15_000,
+              });
+              collector.once("collect", () => selfbotNotify(message));
+              collector.once("end", (collection) => {
+                if (Object.keys(collection).length == 0) throw new Error("Captcha Answer Sent but Got No Response");
+              });
             });
           } else if (/(https?:\/\/[^\s]+)/g.test(message.content)) {
             log("HCaptcha Link Found!", "i");

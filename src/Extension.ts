@@ -80,7 +80,7 @@ const send = async (str: string, type: "normalCommand" | "quote" | "non-prefix" 
         : type == "non-prefix"
         ? "Failed To Send Non Prefix Command"
         : "Failed To Send Quote";
-    log(typeError, "e");
+    global.error?.push(typeError);
   }
 };
 
@@ -161,20 +161,20 @@ const commandHandler = async () => {
 };
 
 const reloadPresence = (client: discord.Client) => {
-  const activity = new discord.RichPresence()
-    .setApplicationId("1188482072197738557")
-    .setType("STREAMING")
-    .setName("Online but don't reply=))")
-    .setDetails("Sleeping or studying...")
-    .setStartTimestamp(new Date(global.startTime))
-    .setAssetsLargeImage(client.user?.bannerURL())
-    .setAssetsLargeText("Do you love me?")
-    .setAssetsSmallImage(client.user?.avatarURL({ format: "png", size: 1024 }))
-    .setAssetsSmallText("Frontend Coder from Viet Nam")
-    .addButton("Github", "https://github.com/sunaookamishirokodev")
-    .addButton("Facebook", "https://www.facebook.com/sunaookamishirokodev");
-  client.user?.setActivity(activity.toJSON());
-  client.user?.setStatus("dnd");
+  // const activity = new discord.RichPresence()
+  //   .setApplicationId("1188482072197738557")
+  //   .setType("STREAMING")
+  //   .setName("Online but don't reply=))")
+  //   .setDetails("Sleeping or studying...")
+  //   .setStartTimestamp(new Date(global.startTime))
+  //   .setAssetsLargeImage(client.user?.bannerURL())
+  //   .setAssetsLargeText("Do you love me?")
+  //   .setAssetsSmallImage(client.user?.avatarURL({ format: "png", size: 1024 }))
+  //   .setAssetsSmallText("Frontend Coder from Viet Nam")
+  //   .addButton("Github", "https://github.com/sunaookamishirokodev")
+  //   .addButton("Facebook", "https://www.facebook.com/sunaookamishirokodev");
+  // client.user?.setActivity(activity.toJSON());
+  // client.user?.setStatus("dnd");
 };
 
 // const solveCaptcha = async (url?: string) => {
@@ -212,17 +212,19 @@ const reloadPresence = (client: discord.Client) => {
 //   }
 // };
 
-async function imageURLtoBase64(image_url = '') {
+async function imageURLtoBase64(image_url = "") {
   return new Promise((resolve, reject) => {
-      axios.get(image_url, { responseType: 'arraybuffer' })
-      .then(res => {
-          resolve(Buffer.from(res.data).toString('base64'))
-      }).catch(reject)
-  })
+    axios
+      .get(image_url, { responseType: "arraybuffer" })
+      .then((res) => {
+        resolve(Buffer.from(res.data).toString("base64"));
+      })
+      .catch(reject);
+  });
 }
 
 const solveCaptcha = async (url?: string, callback?: any) => {
-  const imageBase64 = await imageURLtoBase64(url)
+  const imageBase64 = await imageURLtoBase64(url);
   if (imageBase64) {
     if (global.config.captchaAPI === 1) {
       const params = {
@@ -239,10 +241,12 @@ const solveCaptcha = async (url?: string, callback?: any) => {
       //   .then((response) => response.json())
       //   .then((data) => callback(data));
 
-      axios.post(api, params, {
-        headers: { 'Content-Type': 'application/json' },
-        responseType: 'json'
-      }).then(res => callback(res.data))
+      axios
+        .post(api, params, {
+          headers: { "Content-Type": "application/json" },
+          responseType: "json",
+        })
+        .then((res) => callback(res.data));
     } else if (global.config.captchaAPI === 2) {
     }
   }

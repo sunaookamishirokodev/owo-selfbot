@@ -112,262 +112,267 @@ let isSac: boolean = false;
 export const aHuntbot = async () => {
   await send("hb");
 
-  const collector = global.channel.createMessageCollector({
-    filter: (msg) =>
-      msg.author.id == global.owoID &&
-      msg.embeds[0] &&
-      msg.embeds[0].author !== null &&
-      msg.embeds[0].author.name.includes(msg.guild?.members.me?.displayName!),
-    max: 1,
-    time: 15_000,
-  });
-  collector.once("collect", async (message: Message) => {
-    if (!global.config.autoHunt) return;
-    if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
+  global.channel
+    .createMessageCollector({
+      filter: (msg) =>
+        msg.author.id == global.owoID &&
+        msg.embeds[0] &&
+        msg.embeds[0].author !== null &&
+        msg.embeds[0].author.name.includes(msg.guild?.members.me?.displayName!),
+      max: 1,
+      time: 15_000,
+    })
+    .once("collect", async (message: Message) => {
+      if (!global.config.autoHunt) return;
+      if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
 
-    if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
+      if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
 
-    const embed = message.embeds[0];
-    const quality = embed.fields[7];
-    const progress = embed.fields[8];
+      const embed = message.embeds[0];
+      const quality = embed.fields[7];
+      const progress = embed.fields[8];
 
-    if (progress) {
-      // Nếu đang chạy dở thì set lại time rồi thoát
-      setTime(progress.value);
-      return;
-    }
-
-    if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
-      await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
-      isSac = true;
-      return aHuntbot();
-    }
-
-    if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
-      // nâng cấp
-      const trait = embed.fields[global.config.upgradeTrait].value;
-      if (trait.includes(`[MAX]`)) {
-        // nếu max thì bỏ qua
-        global.config.upgradeTrait = 0;
-        return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
+      if (progress) {
+        // Nếu đang chạy dở thì set lại time rồi thoát
+        setTime(progress.value);
+        return;
       }
 
-      const arr = trait.match(/\[(\d+)\/(\d+)\]/);
-      if (arr) {
-        const essenceNeed = parseInt(arr[2], 10) - parseInt(arr[1], 10);
-        const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
-        if (typeof essenceHave === "number") {
-          if (essenceHave - essenceNeed < 0) {
-            // nếu cung < cầu thì hủy
-            return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
-          } else {
-            let traitName: string;
-            switch (global.config.upgradeTrait) {
-              case 1:
-                traitName = "efficiency";
-                break;
-              case 2:
-                traitName = "time";
-                break;
-              case 3:
-                traitName = "cost";
-                break;
-              case 4:
-                traitName = "gain";
-                break;
-              case 5:
-                traitName = "exp";
-                break;
-              case 6:
-                traitName = "radar";
-                break;
+      if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
+        await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
+        isSac = true;
+        return aHuntbot();
+      }
+
+      if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
+        // nâng cấp
+        const trait = embed.fields[global.config.upgradeTrait].value;
+        if (trait.includes(`[MAX]`)) {
+          // nếu max thì bỏ qua
+          global.config.upgradeTrait = 0;
+          return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
+        }
+
+        const arr = trait.match(/\[(\d+)\/(\d+)\]/);
+        if (arr) {
+          const essenceNeed = parseInt(arr[2], 10) - parseInt(arr[1], 10);
+          const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
+          if (typeof essenceHave === "number") {
+            if (essenceHave - essenceNeed < 0) {
+              // nếu cung < cầu thì hủy
+              return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
+            } else {
+              let traitName: string;
+              switch (global.config.upgradeTrait) {
+                case 1:
+                  traitName = "efficiency";
+                  break;
+                case 2:
+                  traitName = "time";
+                  break;
+                case 3:
+                  traitName = "cost";
+                  break;
+                case 4:
+                  traitName = "gain";
+                  break;
+                case 5:
+                  traitName = "exp";
+                  break;
+                case 6:
+                  traitName = "radar";
+                  break;
+              }
+              send(`upg ${traitName!} all`);
             }
-            send(`upg ${traitName!} all`);
           }
         }
       }
-    }
 
-    await send("hb 1");
-    global.channel
-      .createMessageCollector({
-        filter: (msg) =>
-          msg.author.id == global.owoID &&
-          msg.content.includes(msg.guild?.members.me?.displayName!) &&
-          msg.attachments.first() != undefined &&
-          msg.content.includes("Here is your password!"),
-        max: 1,
-        time: 15_000,
-      })
-      .on("collect", async (msg: Message) => {
-        if (!msg) aHuntbot();
-        const imageUrl = msg.attachments.first()?.url;
-        if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
-        await solveCaptcha(imageUrl, async (data: string) => {
-          const answer = data;
-          console.log(answer)
-          if (!answer || /\d/.test(answer)) {
-            throw new Error(
-              answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
-            );
-          }
-          await send(`hb 24h ${answer}`);
-          global.channel
-            .createMessageCollector({
-              filter: (_msg) =>
-                _msg.author.id === global.owoID && msg.content.includes(msg.guild?.members.me?.displayName!),
-              max: 1,
-              time: 15_000,
-            })
-            .once("collect", async (_msg) => {
-              if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
-                setTime(_msg.content);
-                if (timeoutHuntbot) {
-                  const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
-                  timeHandler(0, timeDiff, true);
+      await send("hb 1");
+      global.channel
+        .createMessageCollector({
+          filter: (msg) =>
+            msg.author.id == global.owoID &&
+            msg.content.includes(msg.guild?.members.me?.displayName!) &&
+            msg.attachments.first() != undefined &&
+            msg.content.includes("Here is your password!"),
+          max: 1,
+          time: 15_000,
+        })
+        .on("collect", async (msg: Message) => {
+          if (!msg) aHuntbot();
+          const imageUrl = msg.attachments.first()?.url;
+          if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
+          await solveCaptcha(imageUrl, async (data: string) => {
+            const answer = data;
+            console.log(answer);
+            if (!answer || /\d/.test(answer)) {
+              throw new Error(
+                answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
+              );
+            }
+            await send(`hb 24h ${answer}`);
+            global.channel
+              .createMessageCollector({
+                filter: (_msg) =>
+                  _msg.author.id === global.owoID && _msg.content.includes(_msg.guild?.members.me?.displayName!),
+                max: 1,
+                time: 15_000,
+              })
+              .once("collect", async (_msg) => {
+                if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
+                  setTime(_msg.content);
+                  if (timeoutHuntbot) {
+                    const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
+                    timeHandler(0, timeDiff, true);
+                  }
+                } else {
+                  log("I have error when solve password of huntbot!!", "e");
                 }
-              } else {
-                log("I have error when solve password of huntbot!!", "e");
-              }
-            });
+              });
+          });
         });
-      });
-  });
+    });
 };
 
 const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean, useStar: boolean) => {
   await send("inv");
 
-  const filter = (msg: Message<boolean>) =>
-    global.config.autoGem !== 0 &&
-    msg.author.id == global.owoID &&
-    msg.content.includes(msg.guild?.members.me?.displayName!) &&
-    /Inventory/.test(msg.content);
+  global.channel
+    .createMessageCollector({
+      filter: (msg: Message<boolean>) =>
+        global.config.autoGem !== 0 &&
+        msg.author.id == global.owoID &&
+        msg.content.includes(msg.guild?.members.me?.displayName!) &&
+        /Inventory/.test(msg.content),
+      max: 1,
+      time: 15_000,
+    })
+    .once("collect", async (msg) => {
+      inv = msg.content.split("`");
 
-  const collector = global.channel.createMessageCollector({ filter, max: 1, time: 15_000 });
-  collector.once("collect", async (msg) => {
-    inv = msg.content.split("`");
-
-    if (global.config.autoCrate && !inv.includes("050")) {
-      log("Disabled auto open lootbox(s) because i couldn't find lootbox!", "a");
-      global.config.autoCrate = false;
-    }
-    iGem1 = inv.filter((elm) => /^05[1-7]$/.test(elm)).map(Number);
-    iGem3 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
-    iGem4 = inv.filter((elm) => /^07[2-8]$/.test(elm)).map(Number);
-    iStar = inv.filter((elm) => /^(079|08[0-5])$/.test(elm)).map(Number);
-
-    global.config.gemType.forEach((v) => {
-      switch (v) {
-        case "common":
-          isGem1.push(Number(`051`));
-          isGem3.push(Number(`065`));
-          isGem4.push(Number(`072`));
-          isStar.push(Number(`079`));
-          break;
-        case "uncommon":
-          isGem1.push(Number(`052`));
-          isGem3.push(Number(`066`));
-          isGem4.push(Number(`073`));
-          isStar.push(Number(`080`));
-          break;
-        case "rare":
-          isGem1.push(Number(`053`));
-          isGem3.push(Number(`067`));
-          isGem4.push(Number(`074`));
-          isStar.push(Number(`081`));
-          break;
-        case "epic":
-          isGem1.push(Number(`054`));
-          isGem3.push(Number(`068`));
-          isGem4.push(Number(`075`));
-          isStar.push(Number(`082`));
-          break;
-        case "mythical":
-          isGem1.push(Number(`055`));
-          isGem3.push(Number(`069`));
-          isGem4.push(Number(`076`));
-          isStar.push(Number(`083`));
-          break;
-        case "legendary":
-          isGem1.push(Number(`056`));
-          isGem3.push(Number(`070`));
-          isGem4.push(Number(`077`));
-          isStar.push(Number(`084`));
-          break;
-        case "fabled":
-          isGem1.push(Number(`057`));
-          isGem3.push(Number(`071`));
-          isGem4.push(Number(`078`));
-          isStar.push(Number(`085`));
-          break;
+      if (global.config.autoCrate && !inv.includes("050")) {
+        log("Disabled auto open lootbox(s) because i couldn't find lootbox!", "a");
+        global.config.autoCrate = false;
       }
-    });
+      iGem1 = inv.filter((elm) => /^05[1-7]$/.test(elm)).map(Number);
+      iGem3 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
+      iGem4 = inv.filter((elm) => /^07[2-8]$/.test(elm)).map(Number);
+      iStar = inv.filter((elm) => /^(079|08[0-5])$/.test(elm)).map(Number);
 
-    const gem1 = iGem1.filter((element) => isGem1.indexOf(element) !== -1);
-    const gem3 = iGem3.filter((element) => isGem3.indexOf(element) !== -1);
-    const gem4 = iGem4.filter((element) => isGem4.indexOf(element) !== -1);
-    const star = iStar.filter((element) => isStar.indexOf(element) !== -1);
-    if (
-      gem1.length === 0 ||
-      gem3.length === 0 ||
-      gem4.length === 0 ||
-      (global.config.useSpecialGem ? star.length === 0 : false)
-    ) {
-      if (global.config.autoCrate) {
-        await send("lb all");
-        return aGem(useGem1, useGem3, useGem4, useStar);
-      } else {
-        if (gem1.length === 0 && !dGem1) {
-          dGem1 = true;
-          log("Disabled gem 1", "a");
+      global.config.gemType.forEach((v) => {
+        switch (v) {
+          case "common":
+            isGem1.push(Number(`051`));
+            isGem3.push(Number(`065`));
+            isGem4.push(Number(`072`));
+            isStar.push(Number(`079`));
+            break;
+          case "uncommon":
+            isGem1.push(Number(`052`));
+            isGem3.push(Number(`066`));
+            isGem4.push(Number(`073`));
+            isStar.push(Number(`080`));
+            break;
+          case "rare":
+            isGem1.push(Number(`053`));
+            isGem3.push(Number(`067`));
+            isGem4.push(Number(`074`));
+            isStar.push(Number(`081`));
+            break;
+          case "epic":
+            isGem1.push(Number(`054`));
+            isGem3.push(Number(`068`));
+            isGem4.push(Number(`075`));
+            isStar.push(Number(`082`));
+            break;
+          case "mythical":
+            isGem1.push(Number(`055`));
+            isGem3.push(Number(`069`));
+            isGem4.push(Number(`076`));
+            isStar.push(Number(`083`));
+            break;
+          case "legendary":
+            isGem1.push(Number(`056`));
+            isGem3.push(Number(`070`));
+            isGem4.push(Number(`077`));
+            isStar.push(Number(`084`));
+            break;
+          case "fabled":
+            isGem1.push(Number(`057`));
+            isGem3.push(Number(`071`));
+            isGem4.push(Number(`078`));
+            isStar.push(Number(`085`));
+            break;
         }
-        if (gem3.length === 0 && !dGem3) {
-          dGem3 = true;
-          log("Disabled gem 3", "a");
-        }
-        if (gem4.length === 0 && !dGem4) {
-          dGem4 = true;
-          log("Disabled gem 4", "a");
-        }
-        if (global.config.useSpecialGem && star.length === 0 && !dStar) {
-          dStar = true;
-          log("Disabled star gem", "a");
+      });
+
+      const gem1 = iGem1.filter((element) => isGem1.indexOf(element) !== -1);
+      const gem3 = iGem3.filter((element) => isGem3.indexOf(element) !== -1);
+      const gem4 = iGem4.filter((element) => isGem4.indexOf(element) !== -1);
+      const star = iStar.filter((element) => isStar.indexOf(element) !== -1);
+
+      if (
+        gem1.length === 0 ||
+        gem3.length === 0 ||
+        gem4.length === 0 ||
+        (global.config.useSpecialGem ? star.length === 0 : false)
+      ) {
+        if (global.config.autoCrate) {
+          await send("lb all");
+          return aGem(useGem1, useGem3, useGem4, useStar);
+        } else {
+          if (gem1.length === 0 && !dGem1) {
+            dGem1 = true;
+            log("Disabled gem 1", "a");
+          }
+          if (gem3.length === 0 && !dGem3) {
+            dGem3 = true;
+            log("Disabled gem 3", "a");
+          }
+          if (gem4.length === 0 && !dGem4) {
+            dGem4 = true;
+            log("Disabled gem 4", "a");
+          }
+          if (global.config.useSpecialGem && star.length === 0 && !dStar) {
+            dStar = true;
+            log("Disabled star gem", "a");
+          }
         }
       }
-    }
-    const gem = gem1.length + gem3.length + gem4.length + (global.config.useSpecialGem ? star.length : 0);
-    log(`Found ${gem} Hunting ${gem > 1 ? "Gems" : "Gem"} in your Inventory`, "i");
+      const gem = gem1.length + gem3.length + gem4.length + (global.config.useSpecialGem ? star.length : 0);
+      log(`Found ${gem} Hunting ${gem > 1 ? "Gems" : "Gem"} in your Inventory`, "i");
 
-    let ugem1 =
-      useGem1 && !dGem1 && gem1.length !== 0
-        ? global.config.autoGem === 1
-          ? Math.max(...gem1)
-          : Math.min(...gem1)
-        : undefined;
-    let ugem3 =
-      useGem3 && !dGem3 && gem3.length !== 0
-        ? global.config.autoGem === 1
-          ? Math.max(...gem3)
-          : Math.min(...gem3)
-        : undefined;
-    let ugem4 =
-      useGem4 && !dGem4 && gem4.length !== 0
-        ? global.config.autoGem === 1
-          ? Math.max(...gem4)
-          : Math.min(...gem4)
-        : undefined;
-    let ustar = undefined;
-    if (global.config.useSpecialGem)
-      ustar =
-        useStar && !dStar && star.length !== 0
+      let ugem1 =
+        useGem1 && !dGem1 && gem1.length !== 0
           ? global.config.autoGem === 1
-            ? Math.max(...star)
-            : Math.min(...star)
+            ? Math.max(...gem1)
+            : Math.min(...gem1)
           : undefined;
-    if (!ugem1 && !ugem3 && !ugem4 && !ustar) return;
-    await send(`use ${ugem1 ?? ""} ${ugem3 ?? ""} ${ugem4 ?? ""} ${ustar ?? ""}`.replace(/\s+/g, " "));
-  });
+      let ugem3 =
+        useGem3 && !dGem3 && gem3.length !== 0
+          ? global.config.autoGem === 1
+            ? Math.max(...gem3)
+            : Math.min(...gem3)
+          : undefined;
+      let ugem4 =
+        useGem4 && !dGem4 && gem4.length !== 0
+          ? global.config.autoGem === 1
+            ? Math.max(...gem4)
+            : Math.min(...gem4)
+          : undefined;
+      let ustar = undefined;
+      if (global.config.useSpecialGem)
+        ustar =
+          useStar && !dStar && star.length !== 0
+            ? global.config.autoGem === 1
+              ? Math.max(...star)
+              : Math.min(...star)
+            : undefined;
+      if (!ugem1 && !ugem3 && !ugem4 && !ustar) return;
+      await send(`use ${ugem1 ?? ""} ${ugem3 ?? ""} ${ugem4 ?? ""} ${ustar ?? ""}`.replace(/\s+/g, " "));
+    });
   await sleep(ranInt(4800, 6200));
 };
 
@@ -383,7 +388,8 @@ const emergencyStop = async () => {
   global.paused = true;
   await sleep(300_000);
   global.paused = false;
-  if (global.paused) main();
+  console.log("RUNNING AGAIN!");
+  if (!global.paused) main();
 };
 
 const getPet = (data: Array<string>, msg?: string, isSigint: boolean = false) => {
@@ -438,48 +444,58 @@ const getPet = (data: Array<string>, msg?: string, isSigint: boolean = false) =>
 };
 
 export const main = async () => {
-  let error: string | null = null;
   if (global.paused) return;
   if (global.captchaDetected) return;
   if (global.lastTime && Date.now() - global.lastTime < 15_000) return;
 
-  const __filter = (msg: Message): boolean => msg.author.id === global.owoID;
-  global.channel.awaitMessages({ filter: __filter, time: 17_000 }).then(async (collected) => {
-    if (collected.size === 0) {
-      error =
-        "I restarted the tool after 5 minutes because Owo did not respond to your command! If the bot still has errors I will continue to pause";
-      emergencyStop();
-    }
-  });
+  global.channel
+    .awaitMessages({ filter: (msg: Message): boolean => msg.author.id === global.owoID, time: 17_000 })
+    .then(async (collected) => {
+      if (collected.size === 0) {
+        global.error?.push(
+          "Tool paused because OwO didn't respond to your command! I will restart the tool after 5 minutes."
+        );
+        await emergencyStop();
+      }
+    });
 
   await send("b", "normalCommand").then(async () => {
     global.totalbattle++;
-    await send("h", "normalCommand");
-    global.totalhunt++;
-
-    const _filter = (msg: Message<boolean>) =>
-      msg.author.id == global.owoID &&
-      msg.content.includes(msg.guild?.members.me?.displayName!) &&
-      msg.content.includes("You don't have enough cowoncy!");
-    const _collector = global.channel.createMessageCollector({ filter: _filter, max: 1, time: 10_000 });
-    _collector.on("collect", async (msg) => {
-      send(`sell ${getPet(global.config.autoSell, "Cowoncy Ran Out, Stopping Selfbot", true).join(" ")}`);
+    await send("h", "normalCommand").then(async () => {
+      global.totalhunt++;
     });
 
-    const filter = (msg: Message<boolean>) =>
-      global.config.autoGem !== 0 &&
-      msg.author.id == global.owoID &&
-      msg.content.includes(msg.guild?.members.me?.displayName!) &&
-      /hunt is empowered by|spent 5 \S+ and caught/.test(msg.content);
-    const collector = global.channel.createMessageCollector({ filter, max: 1, time: 10_000 });
-    collector.on("collect", async (msg: Message) => {
-      let param1: boolean, param2: boolean, param3: boolean, param4: boolean;
-      param1 = !msg.content.includes("gem1") && !dGem1;
-      param2 = !msg.content.includes("gem3") && !dGem3;
-      param3 = !msg.content.includes("gem4") && !dGem4;
-      param4 = global.config.useSpecialGem ? !msg.content.includes("star") && !dStar : false;
-      if (param1 || param2 || param3 || param4) await aGem(param1, param2, param3, param4);
-    });
+    global.channel
+      .createMessageCollector({
+        filter: (msg: Message<boolean>) =>
+          msg.author.id == global.owoID &&
+          msg.content.includes(msg.guild?.members.me?.displayName!) &&
+          msg.content.includes("You don't have enough cowoncy!"),
+        max: 1,
+        time: 10_000,
+      })
+      .on("collect", async (msg) => {
+        send(`sell ${getPet(global.config.autoSell, "Cowoncy Ran Out, Stopping Selfbot", true).join(" ")}`);
+      });
+
+    global.channel
+      .createMessageCollector({
+        filter: (msg: Message<boolean>) =>
+          global.config.autoGem !== 0 &&
+          msg.author.id == global.owoID &&
+          msg.content.includes(msg.guild?.members.me?.displayName!) &&
+          /hunt is empowered by|spent 5 \S+ and caught/.test(msg.content),
+        max: 1,
+        time: 10_000,
+      })
+      .on("collect", async (msg: Message) => {
+        let param1: boolean, param2: boolean, param3: boolean, param4: boolean;
+        param1 = !msg.content.includes("gem1") && !dGem1;
+        param2 = !msg.content.includes("gem3") && !dGem3;
+        param3 = !msg.content.includes("gem4") && !dGem4;
+        param4 = global.config.useSpecialGem ? !msg.content.includes("star") && !dStar : false;
+        if (param1 || param2 || param3 || param4) await aGem(param1, param2, param3, param4);
+      });
   });
 
   global.lastTime = Date.now();
@@ -492,6 +508,7 @@ export const main = async () => {
     },
     { condition: global.config.autoDaily, action: aDaily },
     // { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
+    // { condition: true && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
     { condition: global.config.autoSleep && global.totalbattle + global.totalhunt > timeoutShift, action: aSleep },
     {
       condition: global.config.channelID.length > 1 && global.totalbattle + global.totalhunt > timeoutChannel,
@@ -506,8 +523,9 @@ export const main = async () => {
     const generalDelay = ranInt(17_000, 32_000) / commands.length;
     await sleep(ranInt(generalDelay - 700, generalDelay + 1300));
   }
-  if (error) {
-    log(error, "e");
+  if (global.error?.length !== 0) {
+    global.error?.forEach((e) => log(e, "f"));
+    global.error = [];
   } else {
     log("No error was found!", "f");
   }
@@ -539,7 +557,7 @@ export const selfbotNotify = async (message: Message<boolean>, failed = false) =
         default:
           throw new Error("Unsupported Platform");
       }
-      command += ` "${global.config.musicPath}"`;
+      command += `${global.config.musicPath}`;
       spawn(command, {
         shell: true,
         detached: true,

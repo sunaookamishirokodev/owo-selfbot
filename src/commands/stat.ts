@@ -21,7 +21,7 @@ export default {
       },
       {
         title: "Battle(s)",
-        cotent: global.totalbattle,
+        content: global.totalbattle,
       },
       {
         title: "OwO/UwU",
