@@ -253,8 +253,8 @@ const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean, useSta
       inv = msg.content.split("`");
 
       if (global.config.autoCrate && !inv.includes("050")) {
-        log("Disabled auto open lootbox(s) because i couldn't find lootbox!", "a");
         global.config.autoCrate = false;
+        log("Disabled auto open lootbox(s) because i couldn't find lootbox!", "a");
       }
       iGem1 = inv.filter((elm) => /^05[1-7]$/.test(elm)).map(Number);
       iGem3 = inv.filter((elm) => /^(06[5-9]|07[0-1])$/.test(elm)).map(Number);
@@ -372,6 +372,7 @@ const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean, useSta
             : undefined;
       if (!ugem1 && !ugem3 && !ugem4 && !ustar) return;
       await send(`use ${ugem1 ?? ""} ${ugem3 ?? ""} ${ugem4 ?? ""} ${ustar ?? ""}`.replace(/\s+/g, " "));
+      await sleep(ranInt(1_000, 2_000));
     });
   await sleep(ranInt(4800, 6200));
 };
