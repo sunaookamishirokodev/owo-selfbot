@@ -18,7 +18,7 @@ const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai and upgrade by Su
 let client: Client<boolean>,
   guildID: string,
   channelID: string[],
-  waynotify: number[],
+  waynotify: string,
   webhookURL: string,
   autoPray: string,
   autoPrayUser: string,
@@ -127,15 +127,13 @@ const listChannel = (cache?: string[]) => {
   });
 };
 
-const wayNotify = (cache?: number[]) => {
-  return new InquirerCheckboxQuestion<{ answer: number[] }>({
-    type: "checkbox",
+const wayNotify = (cache?: string) => {
+  return new InquirerListQuestion<{ answer: string }>({
+    type: "list",
     message: "Select how you want to be notified when selfbot receives a captcha",
     choices: [
-      { name: "Music", value: 0 },
-      { name: "Webhook", value: 1 },
-      { name: "Direct Message (Friends Only)", value: 2 },
-      { name: "Call (Friends Only)", value: 3 },
+      { name: "Direct Message (Friends Only)", value: "DMs" },
+      { name: "Windows/Mac Notify", value: "notify" },
     ],
     default: cache,
   });
@@ -159,7 +157,7 @@ const userNotify = (cache?: string) => {
     type: "input",
     message: "Enter user ID you want to be notified via Webhook/Call/Direct Message",
     validate: async (answer: string) => {
-      if ((waynotify.includes(2) || waynotify.includes(3)) && /^\d{17,19}$/.test(answer)) {
+      if ((waynotify === "DMs") && /^\d{17,19}$/.test(answer)) {
         if (answer == client.user?.id) return "Selfbot ID is not valid for Call/DMs option";
         const target = client.users.cache.get(answer);
         if (!target) return "User not found!";
@@ -445,12 +443,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
   guildID = await getResult(listGuild(cache?.guildID));
   channelID = await getResult(listChannel(cache?.channelID));
   waynotify = await getResult(wayNotify(cache?.wayNotify));
-  if (waynotify.includes(0)) {
-    musicPath = await getResult(musicNotify(cache?.musicPath));
-    if (fs.statSync(musicPath).isDirectory()) musicPath = await getResult(music2(musicPath));
-  }
-  if (waynotify.includes(1)) webhookURL = await getResult(webhook(cache?.webhookURL));
-  if (waynotify.includes(1) || waynotify.includes(2) || waynotify.includes(3))
+  if (waynotify === "DMs")
     usernotify = await getResult(userNotify(cache?.userNotify));
   solveCaptcha = await getResult(captchaAPI(cache?.captchaAPI));
   if (solveCaptcha === 1) {
@@ -483,9 +476,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     autoHunt = false;
   if (autoHunt) upgradetrait = await getResult(huntBot(cache?.upgradeTrait));
   if (autoHunt && upgradetrait !== 0)
-    autoSac = await getResult(
-      rate("Select which type of pet(s) you want to sacrifice", cache?.autoSac, true)
-    );
+    autoSac = await getResult(rate("Select which type of pet(s) you want to sacrifice", cache?.autoSac, true));
   autoQuote = await getResult(trueFalse("Toggle Automatically send quotes to level up", cache?.autoQuote));
   autoOwO = await getResult(trueFalse("Toggle Automatically send owo/uwu to level up", cache?.autoOwO));
   autoDaily = await getResult(trueFalse("Toggle Automatically claim daily reward", cache?.autoDaily));

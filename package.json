@@ -1,6 +1,6 @@
 {
   "name": "owo-selfbot",
-  "version": "3.0.5",
+  "version": "3.1.0",
   "description": "Ain't the best OwO Tool Farm, but worth a try (why not?)",
   "type": "module",
   "exports": "./dist/index.js",
@@ -37,12 +37,14 @@
     "axios": "^1.4.0",
     "discord.js-selfbot-v13": "^2.14.9",
     "inquirer": "^9.2.9",
-    "moment-timezone": "^0.5.43"
+    "moment-timezone": "^0.5.43",
+    "node-notifier": "^10.0.1"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.0",
     "@types/inquirer": "^9.0.3",
     "@types/node": "^20.5.6",
+    "@types/node-notifier": "^8.0.5",
     "typescript": "^5.2.2"
   }
 }

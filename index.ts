@@ -160,13 +160,13 @@ process.on("SIGINT", async () => {
           log(`${error}`, "e");
           msg.reply(`${error}`);
         }
-      } else if (!(global.config.cmdPrefix && message.content.startsWith(global.config.cmdPrefix)))
+      } else if (!(global.config.cmdPrefix && message.content.startsWith(global.config.cmdPrefix.toUpperCase())))
         message.reply("Wrong syntax, this message will not be sent to OwO Bot!");
     })
     .on("messageCreate", async (message) => {
       if (!global.config.cmdPrefix || global.config.cmdPrefix.length === 0) return;
       if (
-        message.content.startsWith(global.config.cmdPrefix) &&
+        message.content.startsWith(global.config.cmdPrefix.toUpperCase()) &&
         (message.author.id == global.config.userNotify || message.author.id == message.client.user?.id)
       ) {
         const args = message.content.slice(global.config.cmdPrefix.length).split(/ +/);

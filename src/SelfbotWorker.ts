@@ -1,11 +1,12 @@
 import fs from "fs";
-import { spawn } from "node:child_process";
 import { mapInt, ranInt, send, shuffleArray, sleep, solveCaptcha, timeHandler } from "./Extension.js";
 import { global } from "../index.js";
 import { Configuration } from "./lib/class.js";
 import { log } from "./Console.js";
-import { Message, MessageEmbed, NewsChannel, TextChannel, WebhookClient } from "discord.js-selfbot-v13";
+import { Message, NewsChannel, TextChannel } from "discord.js-selfbot-v13";
 import { quotes } from "./lib/data.js";
+import notifier from "node-notifier";
+import path from "path";
 
 let timeoutChannel = ranInt(17, 51),
   timeoutShift = ranInt(38, 92),
@@ -539,90 +540,28 @@ export const selfbotNotify = async (message: Message<boolean>, failed = false) =
   } Captcha Found in Channel: ${message.channel.toString()}`;
   const attachment = message.attachments.first();
 
-  if (global.config.wayNotify.includes(0))
-    try {
-      let command: string;
-      switch (process.platform) {
-        case "win32":
-          command = `start ""`;
-          break;
-        case "linux":
-          command = `xdg-open`;
-          break;
-        case "darwin":
-          command = `afplay`;
-          break;
-        case "android":
-          command = `termux-media-player play`;
-          break;
-        default:
-          throw new Error("Unsupported Platform");
-      }
-      command += `${global.config.musicPath}`;
-      spawn(command, {
-        shell: true,
-        detached: true,
-        stdio: "ignore",
-      }).unref();
-    } catch (error) {
-      console.log(error);
-      log("Failed to Play Sound", "e");
-    }
-
-  if (global.config.wayNotify.includes(1)) {
-    let embed: MessageEmbed | undefined;
-    if (attachment) {
-      embed = new MessageEmbed()
-        .setTitle(`DMs ${global.config.userNotify ? "Selfbot Account" : "OwO Bot"} (Captcha Answer Only)`)
-        .setDescription(failed ? "**UNSOLVED**" : "SOLVED")
-        .setColor("#00ddff")
-        .setImage(attachment.url)
-        .setFooter({
-          text: "Node.js Selfbot © 2023",
-          iconURL: message.guild?.iconURL({ format: "png" }) ?? "https://i.imgur.com/EqChQK1.png",
-        })
-        .setTimestamp();
-    }
-    try {
-      const webhook = new WebhookClient({
-        url: global.config.webhookURL!,
-      });
-      await webhook.send({
-        avatarURL: message.client.user?.avatarURL({ dynamic: true }) ?? "https://i.imgur.com/9wrvM38.png",
-        username: "Captcha Detector",
-        content,
-        embeds: embed ? [embed] : embed,
-      });
-    } catch (error) {
-      console.log(error);
-      log("Could Not Send The Notification via Webhook URL", "e");
-    }
-  }
-
-  if (global.config.wayNotify.includes(2) || global.config.wayNotify.includes(3)) {
+  if (global.config.wayNotify === "DMs") {
     try {
       const target = message.client.relationships.friendCache.get(global.config.userNotify!);
       if (!target) throw new Error("Notification Recipient Not Found");
       if (!target.dmChannel) await target.createDM();
-      if (global.config.wayNotify.includes(2)) {
-        target
-          .send({
-            content,
-            files: attachment ? [attachment] : undefined,
-          })
-          .catch((e) => {
-            console.log(e);
-            log("Could Not DMs The Notification Recipient", "e");
-          });
-      } else {
-        const calling = await target.dmChannel?.call();
-        if (!calling) throw new Error("Could Not Call The Notification Recipient");
-        setTimeout(() => {
-          if (calling) calling.disconnect();
-        }, 30_000);
-      }
+      target
+        .send({
+          content,
+          files: attachment ? [attachment] : undefined,
+        })
+        .catch((e) => {
+          console.log(e);
+          log("Could Not DMs The Notification Recipient", "e");
+        });
     } catch (error) {
       log(`${error}`, "e");
     }
+  } else if (global.config.wayNotify === "notify") {
+    notifier.notify({
+      title: "Notify from Auto Farm's Xiro",
+      message: content,
+      icon: path.join(".", "shiroko.jpg"),
+    });
   }
 };
