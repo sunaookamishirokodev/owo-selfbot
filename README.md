@@ -67,7 +67,7 @@ npm start
 
 If you see the following warning
 
-![Imgur](https://i.imgur.com/jSTfrOr.png)
+![Imgur](https://i.imgur.com/pwIISzV.png)
 
 Congratulation, you have installed our selfbot successfully.
 
@@ -77,7 +77,7 @@ Type "Y", enter and enjoy your time! (The selfbot will exit if you press enter o
 
 We support 3 ways to login: via token, via QR Code, and via Password
 
-![Imgur](https://i.imgur.com/UwU9Z9B.png)
+![Imgur](https://i.imgur.com/rmPfpza.png)
 
 ### Via token:
 
@@ -111,13 +111,13 @@ console.log(`%cYou now have your token in the clipboard!`, "font-size: 16px");
 
 #### **- Step 2: Simply paste your token into the toolfarm, this will take a while**
 
-![DiscordImage](https://media.discordapp.net/attachments/1177740615123992747/1191604288175226960/image.png?ex=65a60af9&is=659395f9&hm=93f186f96c8dbca8b08df618f219c7aaf670430d39c860de4adc0087f8739972&=&format=png&quality=high&width=825&height=208)
+![Imgur](https://i.imgur.com/YarZy6A.png)
 
 ### Via QR Code
 
 Simply scan the QR Code on the screen by your discord mobile and wait patiently...
 
-![DiscordImage](https://cdn.discordapp.com/attachments/1177740615123992747/1191604935922565140/image.png?ex=65a60b93&is=65939693&hm=eccb83f429c1ed5b064106567b73e42c4769fd625cfaaa9beed52520b8914252&)
+![Imgur](https://i.imgur.com/ksbSk5j.png)
 
 If success, a list of joined servers will be shown up.
 
@@ -197,7 +197,7 @@ Your stars serve as fuel for our spirits, igniting our passion and dedication to
 
 Your stars inspire us to keep pushing boundaries, overcome challenges, and bring about meaningful change.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=sunaookamishirokodev/owo-selfbot-2&type=Date)](https://star-history.com/#sunaookamishrokodev/owo-selfbot-2&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sunaookamishirokodev/owo-selfbot&type=Date)](https://star-history.com/#sunaookamishrokodev/owo-selfbot&Date)
 
 ## Contributing
 
@@ -218,25 +218,13 @@ Please make sure to update tests as appropriate.
 
 ## Acknowledgments
 
-**SPECIAL THANKS TO:**
-
-Eternityy
-
-Aiko-chan-ai
-
-iamz4ri
-
-keepmeside
-
-gillcoder
-
-AmiiUwU
+**SPECIAL THANKS TO:**Eternityy, Aiko-chan-ai, iamz4ri, keepmeside, gillcoder, AmiiUwU.
 
 ## License
 
 ✨ Licensed under the MIT license.
 
-⛱️ Copyright © Shiroko x EternityVN x aiko-chan-ai 2022
+⛱️ Copyright © Shiroko x EternityVN x aiko-chan-ai 2023
 
 💖 Made by Vietnamese with love
 
