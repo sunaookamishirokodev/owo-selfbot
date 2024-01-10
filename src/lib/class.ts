@@ -113,9 +113,6 @@ interface Tool {
   captchaDetected: boolean;
   channel: TextChannel | NewsChannel;
   config: Configuration;
-  commands: {
-    [key: string]: any;
-  };
 }
 
 const resolveData = (

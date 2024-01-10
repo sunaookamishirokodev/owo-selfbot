@@ -1,12 +1,12 @@
-import fs from "fs";
 import { mapInt, ranInt, send, shuffleArray, sleep, solveCaptcha, timeHandler } from "./Extension.js";
-import { global } from "../index.js";
+import fs from "fs";
+import { global } from "./owo.js";
 import { Configuration } from "./lib/class.js";
 import { log } from "./Console.js";
 import { Message, NewsChannel, TextChannel } from "discord.js-selfbot-v13";
 import { quotes } from "./lib/data.js";
 import notifier from "node-notifier";
-import path from "path";
+import path from "node:path";
 
 let timeoutChannel = ranInt(17, 51),
   timeoutShift = ranInt(38, 92),

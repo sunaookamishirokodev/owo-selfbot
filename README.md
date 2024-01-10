@@ -52,7 +52,7 @@ git clone https://github.com/sunaookamishirokodev/owo-selfbot.git
 Now [open the terminal inside folder](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) where you downloaded the selfbot and run the following command:
 
 ```bash
-npm install
+npm run init
 ```
 
 This will install all the requirements (libraries) for the selfbot to run correctly.

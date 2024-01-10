@@ -10,7 +10,7 @@ import {
 import { Client } from "discord.js-selfbot-v13";
 import { accountCheck, accountRemove, checkUpdate } from "./Extension.js";
 import { getResult, trueFalse, log } from "./Console.js";
-import { global } from "../index.js";
+import { global } from "./owo.js";
 
 const supportedAudioExtensions = [".wav", ".mp3", ".m4a", ".flac", ".ogg", "aac"];
 const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai and upgrade by Sunaookami Shiroko. All rights reserved.\nFrom Github with ❤️\nBy using this module, you agree to our Terms of Use and accept any associated risks.\nPlease note that we do not take any responsibility for accounts being banned due to the use of our tools.`;
@@ -157,7 +157,7 @@ const userNotify = (cache?: string) => {
     type: "input",
     message: "Enter user ID you want to be notified via Webhook/Call/Direct Message",
     validate: async (answer: string) => {
-      if ((waynotify === "DMs") && /^\d{17,19}$/.test(answer)) {
+      if (waynotify === "DMs" && /^\d{17,19}$/.test(answer)) {
         if (answer == client.user?.id) return "Selfbot ID is not valid for Call/DMs option";
         const target = client.users.cache.get(answer);
         if (!target) return "User not found!";
@@ -443,8 +443,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
   guildID = await getResult(listGuild(cache?.guildID));
   channelID = await getResult(listChannel(cache?.channelID));
   waynotify = await getResult(wayNotify(cache?.wayNotify));
-  if (waynotify === "DMs")
-    usernotify = await getResult(userNotify(cache?.userNotify));
+  if (waynotify === "DMs") usernotify = await getResult(userNotify(cache?.userNotify));
   solveCaptcha = await getResult(captchaAPI(cache?.captchaAPI));
   if (solveCaptcha === 1) {
     apiuser = await getResult(

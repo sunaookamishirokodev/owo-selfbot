@@ -1,14 +1,15 @@
-process.title = "Tool Farm OwO by Xiro";
-
 import { Message, NewsChannel, TextChannel } from "discord.js-selfbot-v13";
 import path from "node:path";
 import fs from "node:fs";
 
-import { commandHandler, consoleNotify, ranInt, reloadPresence, send, sleep, solveCaptcha } from "./src/Extension.js";
-import { Configuration, Tool } from "./src/lib/class.js";
-import { main, selfbotNotify } from "./src/SelfbotWorker.js";
-import { collectData } from "./src/DataCollector.js";
-import { log } from "./src/Console.js";
+import { consoleNotify, ranInt, reloadPresence, sleep, solveCaptcha } from "./Extension.js";
+import { Configuration, Tool } from "./lib/class.js";
+import { main, selfbotNotify } from "./SelfbotWorker.js";
+import { collectData } from "./DataCollector.js";
+import { log } from "./Console.js";
+import { help, pause, ping, resume, say, shutdown, stat } from "./Command.js";
+
+process.title = "Tool Farm OwO by Xiro";
 
 export const global = {
   owoID: "408785106942164992",
@@ -50,7 +51,6 @@ process.on("SIGINT", async () => {
       log(`\x1b[94mLogged In As ${client.user?.displayName}`, "i");
       global.startTime = Date.now();
       reloadPresence(client);
-      if (global.config.cmdPrefix) global.commands = await commandHandler();
       global.channel = client.channels.cache.get(global.config.channelID[0]) as TextChannel | NewsChannel;
       main();
     })
@@ -163,22 +163,38 @@ process.on("SIGINT", async () => {
       } else if (!(global.config.cmdPrefix && message.content.startsWith(global.config.cmdPrefix.toUpperCase())))
         message.reply("Wrong syntax, this message will not be sent to OwO Bot!");
     })
-    .on("messageCreate", async (message) => {
+    .on("messageCreate", async (message: Message) => {
       if (!global.config.cmdPrefix || global.config.cmdPrefix.length === 0) return;
       if (
-        message.content.startsWith(global.config.cmdPrefix.toUpperCase()) &&
+        message.content.startsWith(global.config.cmdPrefix.toLowerCase()) &&
         (message.author.id == global.config.userNotify || message.author.id == message.client.user?.id)
       ) {
         const args = message.content.slice(global.config.cmdPrefix.length).split(/ +/);
         const commandName = args.shift()?.toLowerCase();
-        if (!commandName || !global.commands[commandName]) return;
-        try {
-          message.channel.sendTyping();
-          await sleep(ranInt(180, 300));
-          await global.commands[commandName].callback(message, ...args);
-        } catch (error) {
-          console.log(error);
-          log("An Error Occurs While Trying To Perform Command", "e");
+        switch (commandName) {
+          case "say":
+            return say(message, args);
+
+          case "stat":
+            return stat(message, args);
+
+          case "shutdown":
+            return shutdown(message, args);
+
+          case "ping":
+            return ping(message, args);
+
+          case "pause":
+            return pause(message, args);
+
+          case "resume":
+            return resume(message, args);
+
+          case "help":
+            return help(message, args)
+          default:
+            log("Invalid Command!", "e");
+            break;
         }
       }
     });

@@ -1,13 +1,12 @@
 import discord from "discord.js-selfbot-v13";
 import fs from "node:fs";
 import path from "node:path";
-import Captcha from "2captcha";
 import axios from "axios";
 import { execSync, spawn } from "node:child_process";
 import admZip from "adm-zip";
 import os from "node:os";
 
-import { global } from "../index.js";
+import { global } from "./owo.js";
 import { Configuration } from "./lib/class.js";
 import { getResult, trueFalse, log } from "./Console.js";
 
@@ -142,24 +141,6 @@ const accountRemove = (data: { [keys: string]: Configuration }, id: string) => {
   fs.writeFileSync(global.DataPath, JSON.stringify(data));
 };
 
-const commandHandler = async () => {
-  const commands = {} as {
-    [key: string]: any;
-  };
-
-  const suffix = ".js";
-  const commandFiles = getFiles(path.join(process.cwd(), "/dist/src/commands/"), suffix);
-
-  for (const command of commandFiles) {
-    let commandFile = await import(`file://${command}`);
-    if (commandFile.default) commandFile = commandFile.default;
-    const commandName = path.basename(command).replace(suffix, "");
-    commands[commandName.toLowerCase()] = commandFile;
-  }
-  log(`Loaded ${Object.keys(commands).length} commands.`, "i");
-  return commands;
-};
-
 const reloadPresence = (client: discord.Client) => {
   // const activity = new discord.RichPresence()
   //   .setApplicationId("1188482072197738557")
@@ -233,13 +214,6 @@ const solveCaptcha = async (url?: string, callback?: any) => {
         data: imageBase64,
       };
       const api = "https://api.apitruecaptcha.org/one/gettext";
-
-      // fetch(api, {
-      //   method: "post",
-      //   body: JSON.stringify(params),
-      // })
-      //   .then((response) => response.json())
-      //   .then((data) => callback(data));
 
       axios
         .post(api, params, {
@@ -343,7 +317,6 @@ const checkUpdate = async () => {
 export {
   timeHandler,
   consoleNotify,
-  commandHandler,
   accountCheck,
   accountRemove,
   reloadPresence,
