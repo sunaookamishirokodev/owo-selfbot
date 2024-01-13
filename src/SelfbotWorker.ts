@@ -1,6 +1,6 @@
 import { mapInt, ranInt, send, shuffleArray, sleep, solveCaptcha, timeHandler } from "./Extension.js";
 import fs from "fs";
-import { global } from "./owo.js";
+import { global } from "../index.js";
 import { Configuration } from "./lib/class.js";
 import { log } from "./Console.js";
 import { Message, NewsChannel, TextChannel } from "discord.js-selfbot-v13";

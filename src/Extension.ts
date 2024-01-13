@@ -6,7 +6,7 @@ import { execSync, spawn } from "node:child_process";
 import admZip from "adm-zip";
 import os from "node:os";
 
-import { global } from "./owo.js";
+import { global } from "../index.js";
 import { Configuration } from "./lib/class.js";
 import { getResult, trueFalse, log } from "./Console.js";
 

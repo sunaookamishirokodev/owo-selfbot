@@ -1,6 +1,6 @@
 import { Message } from "discord.js-selfbot-v13";
 import { timeHandler } from "./Extension.js";
-import { global } from "./owo.js";
+import { global } from "../index.js";
 import { log } from "console";
 import { main } from "./SelfbotWorker.js";
 
