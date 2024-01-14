@@ -77,6 +77,7 @@ interface Configuration {
   apiNCAI?: string;
   botPrefix?: string;
   cmdPrefix?: string;
+  addMoreUser?: boolean;
   trustUser?: string;
   autoPray: string;
   autoPrayUser: string;
@@ -131,6 +132,7 @@ const resolveData = (
   apiNCAI: string,
   botPrefix: string,
   cmdPrefix: string,
+  addMoreUser: boolean,
   trustUser: string,
   autoPray: string,
   autoPrayUser: string,
@@ -165,6 +167,7 @@ const resolveData = (
     apiNCAI,
     botPrefix,
     cmdPrefix,
+    addMoreUser,
     trustUser,
     autoPray,
     autoPrayUser,

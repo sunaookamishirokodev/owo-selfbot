@@ -29,6 +29,7 @@ let client: Client<boolean>,
   apikey: string,
   botPrefix: string,
   cmdPrefix: string,
+  addMoreUser: boolean,
   trustUser: string,
   apilink: string,
   otherCmd: string,
@@ -292,7 +293,7 @@ const getTrustUser = (cache?: string) => {
     type: "input",
     message: "Enter user ID you want to be use selfbot command",
     validate: async (answer: string) => {
-      if (answer == client.user?.id) return "Accounts using selfbot have this feature set by default!";
+      if (answer && answer == client.user?.id) return "Accounts using selfbot have this feature set by default!";
       const target = client.users.cache.get(answer);
       if (!target) return "User not found!";
       return /^(\d{17,19}|)$/.test(answer) ? true : "Invalid User ID";
@@ -472,8 +473,11 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     );
   botPrefix = await getResult(owoPrefix(cache?.botPrefix));
   cmdPrefix = await getResult(userPrefix(cache?.cmdPrefix));
-  if (cmdPrefix !== "" || cmdPrefix !== null) {
-    trustUser = await getResult(getTrustUser(cache?.trustUser));
+  if (cmdPrefix) {
+    addMoreUser = await getResult(trueFalse("Do you want to add user to use selfbot command", cache?.addMoreUser));
+    if (addMoreUser) {
+      trustUser = await getResult(getTrustUser(cache?.trustUser));
+    }
   }
   otherCmd = await getResult(otherCommand(cache?.otherCmd));
   autoPray = await getResult(prayCurse(cache?.autoPray));
@@ -516,6 +520,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     apilink,
     botPrefix,
     cmdPrefix,
+    addMoreUser,
     trustUser,
     autoPray,
     autoPrayUser,
