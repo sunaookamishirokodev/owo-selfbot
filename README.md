@@ -37,10 +37,10 @@ Please make sure that you have installed [Node.js LTS](https://nodejs.org/en/dow
 On Termux, run the following commands:
 
 ```bash
-(sudo) apt update
-(sudo) apt upgrade
-(sudo) apt install nodejs-lts
-(sudo) apt install git
+apt update
+apt upgrade
+apt install nodejs-lts
+apt install git
 ```
 
 Download and extract the module or clone/pull it using [Git](https://git-scm.com/downloads):

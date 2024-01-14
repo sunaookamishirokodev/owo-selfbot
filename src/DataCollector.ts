@@ -282,11 +282,7 @@ const owoPrefix = (cache?: string) => {
 const userPrefix = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({
     type: "input",
-    message: '[BETA] Enter your Selfbot Prefix [type: "prefix + help"] to get more infomation!, empty to skip',
-    validate: (answer: string) => {
-      if (!answer) return true;
-      return /^[^0-9\s]{1,5}$/.test(answer) ? true : "Invalid Prefix";
-    },
+    message: 'Enter your Selfbot Prefix [type: "prefix + help"] to get more infomation!, empty to skip',
     default: cache,
   });
 };
@@ -476,7 +472,9 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
     );
   botPrefix = await getResult(owoPrefix(cache?.botPrefix));
   cmdPrefix = await getResult(userPrefix(cache?.cmdPrefix));
-  trustUser = await getResult(getTrustUser(cache?.trustUser))
+  if (cmdPrefix !== "" || cmdPrefix !== null) {
+    trustUser = await getResult(getTrustUser(cache?.trustUser));
+  }
   otherCmd = await getResult(otherCommand(cache?.otherCmd));
   autoPray = await getResult(prayCurse(cache?.autoPray));
   if (autoPray !== "skip") autoPrayUser = await getResult(prayCurseUser(cache?.autoPrayUser));
