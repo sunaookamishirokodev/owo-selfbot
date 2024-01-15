@@ -109,133 +109,133 @@ const setTime = (msg: string) => {
   }
 };
 
-let isSac: boolean = false;
-export const aHuntbot = async () => {
-  await send("hb");
+// let isSac: boolean = false;
+// export const aHuntbot = async () => {
+//   await send("hb");
 
-  global.channel
-    .createMessageCollector({
-      filter: (msg) =>
-        msg.author.id == global.owoID &&
-        msg.embeds[0] &&
-        msg.embeds[0].author !== null &&
-        msg.embeds[0].author.name.includes(msg.guild?.members.me?.displayName!),
-      max: 1,
-      time: 15_000,
-    })
-    .once("collect", async (message: Message) => {
-      if (!global.config.autoHunt) return;
-      if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
+//   global.channel
+//     .createMessageCollector({
+//       filter: (msg) =>
+//         msg.author.id == global.owoID &&
+//         msg.embeds[0] &&
+//         msg.embeds[0].author !== null &&
+//         msg.embeds[0].author.name.includes(msg.guild?.members.me?.displayName!),
+//       max: 1,
+//       time: 15_000,
+//     })
+//     .once("collect", async (message: Message) => {
+//       if (!global.config.autoHunt) return;
+//       if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
 
-      if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
+//       if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
 
-      const embed = message.embeds[0];
-      const quality = embed.fields[7];
-      const progress = embed.fields[8];
+//       const embed = message.embeds[0];
+//       const quality = embed.fields[7];
+//       const progress = embed.fields[8];
 
-      if (progress) {
-        // Nếu đang chạy dở thì set lại time rồi thoát
-        setTime(progress.value);
-        return;
-      }
+//       if (progress) {
+//         // Nếu đang chạy dở thì set lại time rồi thoát
+//         setTime(progress.value);
+//         return;
+//       }
 
-      if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
-        await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
-        isSac = true;
-        return aHuntbot();
-      }
+//       if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
+//         await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
+//         isSac = true;
+//         return aHuntbot();
+//       }
 
-      if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
-        // nâng cấp
-        const trait = embed.fields[global.config.upgradeTrait].value;
-        if (trait.includes(`[MAX]`)) {
-          // nếu max thì bỏ qua
-          global.config.upgradeTrait = 0;
-          return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
-        }
+//       if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
+//         // nâng cấp
+//         const trait = embed.fields[global.config.upgradeTrait].value;
+//         if (trait.includes(`[MAX]`)) {
+//           // nếu max thì bỏ qua
+//           global.config.upgradeTrait = 0;
+//           return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
+//         }
 
-        const arr = trait.match(/\[(\d+)\/(\d+)\]/);
-        if (arr) {
-          const essenceNeed = parseInt(arr[2], 10) - parseInt(arr[1], 10);
-          const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
-          if (typeof essenceHave === "number") {
-            if (essenceHave - essenceNeed < 0) {
-              // nếu cung < cầu thì hủy
-              return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
-            } else {
-              let traitName: string;
-              switch (global.config.upgradeTrait) {
-                case 1:
-                  traitName = "efficiency";
-                  break;
-                case 2:
-                  traitName = "time";
-                  break;
-                case 3:
-                  traitName = "cost";
-                  break;
-                case 4:
-                  traitName = "gain";
-                  break;
-                case 5:
-                  traitName = "exp";
-                  break;
-                case 6:
-                  traitName = "radar";
-                  break;
-              }
-              send(`upg ${traitName!} all`);
-            }
-          }
-        }
-      }
+//         const arr = trait.match(/\[(\d+)\/(\d+)\]/);
+//         if (arr) {
+//           const essenceNeed = parseInt(arr[2], 10) - parseInt(arr[1], 10);
+//           const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
+//           if (typeof essenceHave === "number") {
+//             if (essenceHave - essenceNeed < 0) {
+//               // nếu cung < cầu thì hủy
+//               return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
+//             } else {
+//               let traitName: string;
+//               switch (global.config.upgradeTrait) {
+//                 case 1:
+//                   traitName = "efficiency";
+//                   break;
+//                 case 2:
+//                   traitName = "time";
+//                   break;
+//                 case 3:
+//                   traitName = "cost";
+//                   break;
+//                 case 4:
+//                   traitName = "gain";
+//                   break;
+//                 case 5:
+//                   traitName = "exp";
+//                   break;
+//                 case 6:
+//                   traitName = "radar";
+//                   break;
+//               }
+//               send(`upg ${traitName!} all`);
+//             }
+//           }
+//         }
+//       }
 
-      await send("hb 1");
-      global.channel
-        .createMessageCollector({
-          filter: (msg) =>
-            msg.author.id == global.owoID &&
-            msg.content.includes(msg.guild?.members.me?.displayName!) &&
-            msg.attachments.first() != undefined &&
-            msg.content.includes("Here is your password!"),
-          max: 1,
-          time: 15_000,
-        })
-        .on("collect", async (msg: Message) => {
-          if (!msg) aHuntbot();
-          const imageUrl = msg.attachments.first()?.url;
-          if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
-          await solveCaptcha(imageUrl, async (data: string) => {
-            const answer = data;
-            console.log(answer);
-            if (!answer || /\d/.test(answer)) {
-              throw new Error(
-                answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
-              );
-            }
-            await send(`hb 24h ${answer}`);
-            global.channel
-              .createMessageCollector({
-                filter: (_msg) =>
-                  _msg.author.id === global.owoID && _msg.content.includes(_msg.guild?.members.me?.displayName!),
-                max: 1,
-                time: 15_000,
-              })
-              .once("collect", async (_msg) => {
-                if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
-                  setTime(_msg.content);
-                  if (timeoutHuntbot) {
-                    const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
-                    timeHandler(0, timeDiff, true);
-                  }
-                } else {
-                  log("I have error when solve password of huntbot!!", "e");
-                }
-              });
-          });
-        });
-    });
-};
+//       await send("hb 1");
+//       global.channel
+//         .createMessageCollector({
+//           filter: (msg) =>
+//             msg.author.id == global.owoID &&
+//             msg.content.includes(msg.guild?.members.me?.displayName!) &&
+//             msg.attachments.first() != undefined &&
+//             msg.content.includes("Here is your password!"),
+//           max: 1,
+//           time: 15_000,
+//         })
+//         .on("collect", async (msg: Message) => {
+//           if (!msg) aHuntbot();
+//           const imageUrl = msg.attachments.first()?.url;
+//           if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
+//           await solveCaptcha(imageUrl, async (data: string) => {
+//             const answer = data;
+//             console.log(answer);
+//             if (!answer || /\d/.test(answer)) {
+//               throw new Error(
+//                 answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
+//               );
+//             }
+//             await send(`hb 24h ${answer}`);
+//             global.channel
+//               .createMessageCollector({
+//                 filter: (_msg) =>
+//                   _msg.author.id === global.owoID && _msg.content.includes(_msg.guild?.members.me?.displayName!),
+//                 max: 1,
+//                 time: 15_000,
+//               })
+//               .once("collect", async (_msg) => {
+//                 if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
+//                   setTime(_msg.content);
+//                   if (timeoutHuntbot) {
+//                     const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
+//                     timeHandler(0, timeDiff, true);
+//                   }
+//                 } else {
+//                   log("I have error when solve password of huntbot!!", "e");
+//                 }
+//               });
+//           });
+//         });
+//     });
+// };
 
 const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean, useStar: boolean) => {
   await send("inv");
@@ -510,7 +510,6 @@ export const main = async () => {
     },
     { condition: global.config.autoDaily, action: aDaily },
     // { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
-    // { condition: true && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
     { condition: global.config.autoSleep && global.totalbattle + global.totalhunt > timeoutShift, action: aSleep },
     {
       condition: global.config.channelID.length > 1 && global.totalbattle + global.totalhunt > timeoutChannel,
@@ -534,10 +533,7 @@ export const main = async () => {
   main();
 };
 
-export const selfbotNotify = async (message: Message<boolean>, failed = false) => {
-  const content = `${
-    global.config.userNotify ? `<@${global.config.userNotify}>` : ""
-  } Captcha Found in Channel: ${message.channel.toString()}`;
+export const selfbotNotify = async (message: Message, failed = false) => {
   const attachment = message.attachments.first();
 
   if (global.config.wayNotify === "DMs") {
@@ -547,7 +543,9 @@ export const selfbotNotify = async (message: Message<boolean>, failed = false) =
       if (!target.dmChannel) await target.createDM();
       target
         .send({
-          content,
+          content: `${
+            global.config.userNotify ? `<@${global.config.userNotify}>` : ""
+          } Captcha Found in Channel: ${message.channel.toString()}`,
           files: attachment ? [attachment] : undefined,
         })
         .catch((e) => {
@@ -560,8 +558,11 @@ export const selfbotNotify = async (message: Message<boolean>, failed = false) =
   } else if (global.config.wayNotify === "notify") {
     notifier.notify({
       title: "Notify from Auto Farm's Xiro",
-      message: content,
+      message: `${global.config.userNotify ? `@${global.config.tag}` : ""} Captcha Found in Channel: ${
+        message.channel.type !== "DM" && message.channel.name
+      }`,
       icon: path.join(".", "shiroko.jpg"),
+      open: `https://discord.com/channels/${message.guild ? message.guild.id : "@me"}/${message.channel.id}`,
     });
   }
 };
