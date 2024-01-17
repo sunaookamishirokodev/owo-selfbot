@@ -76,6 +76,7 @@ const aChannel = async () => {
 
 const aSleep = async () => {
   log(`Selfbot is taking a break for ${timeHandler(0, timeoutSleep, true)}`, "a");
+  global.paused = true;
   await sleep(timeoutSleep);
   const nextShift = ranInt(38, 92);
   timeoutShift += nextShift;
