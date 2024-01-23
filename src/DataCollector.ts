@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import {
   InquirerInputQuestion,
   InquirerCheckboxQuestion,
@@ -18,7 +17,7 @@ const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai and upgrade by Su
 let client: Client<boolean>,
   guildID: string,
   channelID: string[],
-  waynotify: string,
+  waynotify: string[],
   webhookURL: string,
   autoPray: string,
   autoPrayUser: string,
@@ -129,9 +128,9 @@ const listChannel = (cache?: string[]) => {
   });
 };
 
-const wayNotify = (cache?: string) => {
-  return new InquirerListQuestion<{ answer: string }>({
-    type: "list",
+const wayNotify = (cache?: string[]) => {
+  return new InquirerCheckboxQuestion<{ answer: string[] }>({
+    type: "checkbox",
     message: "Select how you want to be notified when selfbot receives a captcha",
     choices: [
       { name: "Direct Message (Friends Only)", value: "DMs" },
@@ -159,7 +158,7 @@ const userNotify = (cache?: string) => {
     type: "input",
     message: "Enter user ID you want to be notified via Webhook/Call/Direct Message",
     validate: async (answer: string) => {
-      if (waynotify === "DMs" && /^\d{17,19}$/.test(answer)) {
+      if (waynotify.includes("DMs") && /^\d{17,19}$/.test(answer)) {
         if (answer == client.user?.id) return "Selfbot ID is not valid for Call/DMs option";
         const target = client.users.cache.get(answer);
         if (!target) return "User not found!";
@@ -455,7 +454,7 @@ export const collectData = async (data: { [key: string]: Configuration }) => {
   guildID = await getResult(listGuild(cache?.guildID));
   channelID = await getResult(listChannel(cache?.channelID));
   waynotify = await getResult(wayNotify(cache?.wayNotify));
-  if (waynotify === "DMs") usernotify = await getResult(userNotify(cache?.userNotify));
+  if (waynotify.includes("DMs")) usernotify = await getResult(userNotify(cache?.userNotify));
   solveCaptcha = await getResult(captchaAPI(cache?.captchaAPI));
   if (solveCaptcha === 1) {
     apiuser = await getResult(

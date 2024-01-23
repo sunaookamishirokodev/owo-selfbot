@@ -67,7 +67,7 @@ interface Configuration {
   token: string;
   guildID: string;
   channelID: string[];
-  wayNotify: string;
+  wayNotify: string[];
   musicPath?: string;
   webhookURL?: string;
   userNotify?: string;
@@ -122,7 +122,7 @@ const resolveData = (
   token: string,
   guildID: string,
   channelID: string[],
-  wayNotify: string,
+  wayNotify: string[],
   musicPath: string,
   webhookURL: string,
   userNotify: string,

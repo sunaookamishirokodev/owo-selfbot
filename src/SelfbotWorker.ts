@@ -537,7 +537,7 @@ export const main = async () => {
 export const selfbotNotify = async (message: Message, failed = false) => {
   const attachment = message.attachments.first();
 
-  if (global.config.wayNotify === "DMs") {
+  if (global.config.wayNotify.includes("DMs")) {
     try {
       const target = message.client.relationships.friendCache.get(global.config.userNotify!);
       if (!target) throw new Error("Notification Recipient Not Found");
@@ -556,7 +556,7 @@ export const selfbotNotify = async (message: Message, failed = false) => {
     } catch (error) {
       log(`${error}`, "e");
     }
-  } else if (global.config.wayNotify === "notify") {
+  } else if (global.config.wayNotify.includes("notify")) {
     notifier.notify({
       title: "Notify from Auto Farm's Xiro",
       message: `${global.config.userNotify ? `@${global.config.tag}` : ""} Captcha Found in Channel: ${
