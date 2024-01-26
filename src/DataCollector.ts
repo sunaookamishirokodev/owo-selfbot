@@ -11,7 +11,6 @@ import { accountCheck, accountRemove, checkUpdate } from "./Extension.js";
 import { getResult, trueFalse, log } from "./Console.js";
 import { global } from "../index.js";
 
-const supportedAudioExtensions = [".wav", ".mp3", ".m4a", ".flac", ".ogg", "aac"];
 const document = `Copyright 2023 © Eternity_VN x aiko-chan-ai and upgrade by Sunaookami Shiroko. All rights reserved.\nFrom Github with ❤️\nBy using this module, you agree to our Terms of Use and accept any associated risks.\nPlease note that we do not take any responsibility for accounts being banned due to the use of our tools.`;
 
 let client: Client<boolean>,
@@ -140,19 +139,6 @@ const wayNotify = (cache?: string[]) => {
   });
 };
 
-// const webhook = (cache?: string) => {
-//   return new InquirerInputQuestion<{ answer: string }>({
-//     type: "input",
-//     message: "Enter your webhook link",
-//     validate: (answer: string) => {
-//       return answer.match(/(^.*(discord|discordapp)\.com\/api\/webhooks\/([\d]+)\/([a-zA-Z0-9_-]+)$)/gm)
-//         ? true
-//         : "Invalid Webhook";
-//     },
-//     default: cache,
-//   });
-// };
-
 const userNotify = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({
     type: "input",
@@ -189,36 +175,6 @@ const userNotify = (cache?: string) => {
   });
 };
 
-// const musicNotify = (cache?: string) => {
-//   return new InquirerInputQuestion<{ answer: string }>({
-//     type: "input",
-//     message: "Enter music file/directory path",
-//     validate: (answer: string) => {
-//       if (!/^([a-zA-Z]:)?(\/?[^\/\0+]+)+(\/[^\/\0]+)?$/.test(answer)) return "Invalid Path";
-//       if (!fs.existsSync(answer)) return "Path Not Found!";
-//       const stats = fs.statSync(answer);
-//       if (stats.isDirectory()) {
-//         if (fs.readdirSync(answer).some((file) => supportedAudioExtensions.includes(path.extname(file)))) return true;
-//         return "No Supported File Found!";
-//       }
-//       if (stats.isFile() && supportedAudioExtensions.includes(path.extname(answer))) return true;
-//       return "Invalid Directory";
-//     },
-//     default: cache,
-//   });
-// };
-
-// const music2 = (directory: string) => {
-//   const supportedFiles = fs
-//     .readdirSync(directory)
-//     .filter((file) => supportedAudioExtensions.includes(path.extname(file)));
-//   return new InquirerListQuestion<{ answer: string }>({
-//     type: "list",
-//     message: "Select your music file",
-//     choices: [...supportedFiles.map((file) => ({ name: file, value: path.join(directory, file) }))],
-//   });
-// };
-
 const captchaAPI = (cache?: number) => {
   return new InquirerListQuestion<{ answer: number }>({
     type: "list",
@@ -254,18 +210,6 @@ const apiKey = (cache?: string) => {
     default: cache,
   });
 };
-
-// const apiNCAI = (cache?: string) => {
-//   return new InquirerInputQuestion<{ answer: string }>({
-//     type: "input",
-//     message: "[BETA] Enter your NoCaptchaAI API Key, Empty to skip",
-//     validate: (answer: string) => {
-//       if (!answer) return true;
-//       return /^\S+$/.test(answer) ? true : "Invalid API Key";
-//     },
-//     default: cache,
-//   });
-// };
 
 const owoPrefix = (cache?: string) => {
   return new InquirerInputQuestion<{ answer: string }>({

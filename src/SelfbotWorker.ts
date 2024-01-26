@@ -78,10 +78,13 @@ const aSleep = async () => {
   log(`Selfbot is taking a break for ${timeHandler(0, timeoutSleep, true)}`, "a");
   global.paused = true;
   await sleep(timeoutSleep);
-  if (global.paused) global.paused = false;
   const nextShift = ranInt(38, 92);
   timeoutShift += nextShift;
   timeoutSleep = mapInt(nextShift, 38, 92, 160_000, 1_275_000);
+  if (global.paused) {
+    global.paused = false;
+    main();
+  }
 };
 
 const aQuote = async () => {
@@ -386,7 +389,6 @@ export const main = async () => {
       action: aPray,
     },
     { condition: global.config.autoDaily, action: aDaily },
-    // { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
     { condition: global.config.autoSleep && global.totalbattle + global.totalhunt > timeoutShift, action: aSleep },
     {
       condition: global.config.channelID.length > 1 && global.totalbattle + global.totalhunt > timeoutChannel,

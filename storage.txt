@@ -16,14 +16,14 @@ export const aHuntbot = async () => {
       if (!global.config.autoHunt) return;
       if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
 
-      if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
+      if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); gọi lại func khi huntbot trả pet
 
       const embed = message.embeds[0];
       const quality = embed.fields[7];
       const progress = embed.fields[8];
 
       if (progress) {
-        // Nếu đang chạy dở thì set lại time rồi thoát
+        Nếu đang chạy dở thì set lại time rồi thoát
         setTime(progress.value);
         return;
       }
@@ -35,10 +35,10 @@ export const aHuntbot = async () => {
       }
 
       if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
-        // nâng cấp
+        nâng cấp
         const trait = embed.fields[global.config.upgradeTrait].value;
         if (trait.includes(`[MAX]`)) {
-          // nếu max thì bỏ qua
+          nếu max thì bỏ qua
           global.config.upgradeTrait = 0;
           return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
         }
@@ -49,7 +49,7 @@ export const aHuntbot = async () => {
           const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
           if (typeof essenceHave === "number") {
             if (essenceHave - essenceNeed < 0) {
-              // nếu cung < cầu thì hủy
+              nếu cung < cầu thì hủy
               return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
             } else {
               let traitName: string;
@@ -124,4 +124,113 @@ export const aHuntbot = async () => {
           });
         });
     });
+};
+
+    // { condition: global.config.autoHunt && (!timeoutHuntbot || new Date() > timeoutHuntbot), action: aHuntbot },
+
+const getFiles = (dir: string, suffix: string): string[] => {
+  const files: fs.Dirent[] = fs.readdirSync(dir, {
+    withFileTypes: true,
+  });
+
+  let commandFiles: string[] = [];
+
+  for (const file of files) {
+    if (file.isDirectory()) {
+      commandFiles = [...commandFiles, ...getFiles(path.join(dir, file.name), suffix)];
+    } else if (file.name.endsWith(suffix)) commandFiles.push(path.join(dir, file.name));
+  }
+  return commandFiles;
+};
+
+const solveCaptcha = async (url?: string) => {
+  if (url) {
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "Content-Type": "application/octet-stream",
+      },
+    });
+    const imageBuffer = Buffer.from(response.data, "binary").toString("base64");
+    if (global.config.captchaAPI == 1) {
+      const obj = {
+        userid: global.config.apiUser,
+        apikey: global.config.apiKey,
+        data: imageBuffer,
+      };
+      return new Promise(async (resolve, reject) => {
+        const res = await axios
+          .post("https://api.apitruecaptcha.org/one/gettext", obj, {
+            headers: { "Content-Type": "application/json" },
+          })
+          .catch(reject);
+        if (res) resolve(res.data.result);
+      });
+    } else if (global.config.captchaAPI == 2) {
+      const solver = new Captcha.Solver(global.config.apiKey!);
+      return new Promise(async (resolve, reject) => {
+        const res = await solver.imageCaptcha(imageBuffer).catch(reject);
+        if (res) resolve(res.data);
+      });
+    }
+  }
+};
+
+const supportedAudioExtensions = [".wav", ".mp3", ".m4a", ".flac", ".ogg", "aac"];
+
+const webhook = (cache?: string) => {
+  return new InquirerInputQuestion<{ answer: string }>({
+    type: "input",
+    message: "Enter your webhook link",
+    validate: (answer: string) => {
+      return answer.match(/(^.*(discord|discordapp)\.com\/api\/webhooks\/([\d]+)\/([a-zA-Z0-9_-]+)$)/gm)
+        ? true
+        : "Invalid Webhook";
+    },
+    default: cache,
+  });
+};
+
+const musicNotify = (cache?: string) => {
+  return new InquirerInputQuestion<{ answer: string }>({
+    type: "input",
+    message: "Enter music file/directory path",
+    validate: (answer: string) => {
+      if (!/^([a-zA-Z]:)?(\/?[^\/\0+]+)+(\/[^\/\0]+)?$/.test(answer)) return "Invalid Path";
+      if (!fs.existsSync(answer)) return "Path Not Found!";
+      const stats = fs.statSync(answer);
+      if (stats.isDirectory()) {
+        if (fs.readdirSync(answer).some((file) => supportedAudioExtensions.includes(path.extname(file)))) return true;
+        return "No Supported File Found!";
+      }
+      if (stats.isFile() && supportedAudioExtensions.includes(path.extname(answer))) return true;
+      return "Invalid Directory";
+    },
+    default: cache,
+  });
+};
+
+const music2 = (directory: string) => {
+  const supportedFiles = fs
+    .readdirSync(directory)
+    .filter((file) => supportedAudioExtensions.includes(path.extname(file)));
+  return new InquirerListQuestion<{ answer: string }>({
+    type: "list",
+    message: "Select your music file",
+    choices: [...supportedFiles.map((file) => ({ name: file, value: path.join(directory, file) }))],
+  });
+};
+
+const apiNCAI = (cache?: string) => {
+  return new InquirerInputQuestion<{ answer: string }>({
+    type: "input",
+    message: "[BETA] Enter your NoCaptchaAI API Key, Empty to skip",
+    validate: (answer: string) => {
+      if (!answer) return true;
+      return /^\S+$/.test(answer) ? true : "Invalid API Key";
+    },
+    default: cache,
+  });
 };

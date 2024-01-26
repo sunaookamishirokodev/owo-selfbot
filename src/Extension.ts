@@ -83,21 +83,6 @@ const send = async (str: string, type: "normalCommand" | "quote" | "non-prefix" 
   }
 };
 
-const getFiles = (dir: string, suffix: string): string[] => {
-  const files: fs.Dirent[] = fs.readdirSync(dir, {
-    withFileTypes: true,
-  });
-
-  let commandFiles: string[] = [];
-
-  for (const file of files) {
-    if (file.isDirectory()) {
-      commandFiles = [...commandFiles, ...getFiles(path.join(dir, file.name), suffix)];
-    } else if (file.name.endsWith(suffix)) commandFiles.push(path.join(dir, file.name));
-  }
-  return commandFiles;
-};
-
 const copyDirectory = (sourceDir: string, destDir: string) => {
   if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
   const files = fs.readdirSync(sourceDir);
@@ -157,41 +142,6 @@ const reloadPresence = (client: discord.Client) => {
   // client.user?.setActivity(activity.toJSON());
   // client.user?.setStatus("dnd");
 };
-
-// const solveCaptcha = async (url?: string) => {
-//   if (url) {
-//     const response = await axios.get(url, {
-//       responseType: "arraybuffer",
-//       headers: {
-//         "User-Agent":
-//           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-//         "Content-Type": "application/octet-stream",
-//       },
-//     });
-//     const imageBuffer = Buffer.from(response.data, "binary").toString("base64");
-//     if (global.config.captchaAPI == 1) {
-//       const obj = {
-//         userid: global.config.apiUser,
-//         apikey: global.config.apiKey,
-//         data: imageBuffer,
-//       };
-//       return new Promise(async (resolve, reject) => {
-//         const res = await axios
-//           .post("https://api.apitruecaptcha.org/one/gettext", obj, {
-//             headers: { "Content-Type": "application/json" },
-//           })
-//           .catch(reject);
-//         if (res) resolve(res.data.result);
-//       });
-//     } else if (global.config.captchaAPI == 2) {
-//       const solver = new Captcha.Solver(global.config.apiKey!);
-//       return new Promise(async (resolve, reject) => {
-//         const res = await solver.imageCaptcha(imageBuffer).catch(reject);
-//         if (res) resolve(res.data);
-//       });
-//     }
-//   }
-// };
 
 async function imageURLtoBase64(image_url = "") {
   return new Promise((resolve, reject) => {
