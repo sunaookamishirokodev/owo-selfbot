@@ -79,7 +79,7 @@ const send = async (str: string, type: "normalCommand" | "quote" | "non-prefix" 
         : type == "non-prefix"
         ? "Failed To Send Non Prefix Command"
         : "Failed To Send Quote";
-    global.error?.push(typeError);
+    global.error = [...global.error, typeError];
   }
 };
 
