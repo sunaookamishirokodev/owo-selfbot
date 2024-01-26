@@ -1,6 +1,6 @@
 {
   "name": "owo-selfbot",
-  "version": "4.0.9",
+  "version": "4.1.0",
   "description": "Ain't the best OwO Tool Farm, but worth a try (why not?)",
   "type": "module",
   "exports": "./owo.js",

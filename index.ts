@@ -21,6 +21,7 @@ export const global = {
   totalOtherCmd: 0,
   totalpraycurse: 0,
   totaltxt: 0,
+  error: [],
 } as Tool;
 
 global.DataPath = path.join("./", "selfbot.json");

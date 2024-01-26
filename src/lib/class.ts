@@ -104,7 +104,6 @@ interface Tool {
   startTime: number;
   lastTime?: number;
   reloadTime?: number;
-  error?: string[];
   totalhunt: number;
   totalbattle: number;
   totalowo: number;
@@ -112,6 +111,7 @@ interface Tool {
   totalpraycurse: number;
   totaltxt: number;
   paused: boolean;
+  error: [] | string[];
   captchaDetected: boolean;
   channel: TextChannel | NewsChannel;
   config: Configuration;

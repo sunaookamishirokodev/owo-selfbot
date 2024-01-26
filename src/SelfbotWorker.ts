@@ -78,6 +78,7 @@ const aSleep = async () => {
   log(`Selfbot is taking a break for ${timeHandler(0, timeoutSleep, true)}`, "a");
   global.paused = true;
   await sleep(timeoutSleep);
+  if (global.paused) global.paused = false;
   const nextShift = ranInt(38, 92);
   timeoutShift += nextShift;
   timeoutSleep = mapInt(nextShift, 38, 92, 160_000, 1_275_000);
@@ -109,134 +110,6 @@ const setTime = (msg: string) => {
     }
   }
 };
-
-// let isSac: boolean = false;
-// export const aHuntbot = async () => {
-//   await send("hb");
-
-//   global.channel
-//     .createMessageCollector({
-//       filter: (msg) =>
-//         msg.author.id == global.owoID &&
-//         msg.embeds[0] &&
-//         msg.embeds[0].author !== null &&
-//         msg.embeds[0].author.name.includes(msg.guild?.members.me?.displayName!),
-//       max: 1,
-//       time: 15_000,
-//     })
-//     .once("collect", async (message: Message) => {
-//       if (!global.config.autoHunt) return;
-//       if (timeoutHuntbot && new Date() < timeoutHuntbot) return;
-
-//       if (!message.embeds[0] && message.content.includes("BEEP BOOP. I AM BACK")) aHuntbot(); // gọi lại func khi huntbot trả pet
-
-//       const embed = message.embeds[0];
-//       const quality = embed.fields[7];
-//       const progress = embed.fields[8];
-
-//       if (progress) {
-//         // Nếu đang chạy dở thì set lại time rồi thoát
-//         setTime(progress.value);
-//         return;
-//       }
-
-//       if (!isSac && global.config.autoSac && global.config.autoSac.length !== 0) {
-//         await send(`sc ${getPet(global.config.autoSac).join(" ")}`);
-//         isSac = true;
-//         return aHuntbot();
-//       }
-
-//       if (global.config.upgradeTrait && global.config.upgradeTrait !== 0) {
-//         // nâng cấp
-//         const trait = embed.fields[global.config.upgradeTrait].value;
-//         if (trait.includes(`[MAX]`)) {
-//           // nếu max thì bỏ qua
-//           global.config.upgradeTrait = 0;
-//           return log("Trait Max Level Reached, Auto Upgrade Trait has been Disabled", "i");
-//         }
-
-//         const arr = trait.match(/\[(\d+)\/(\d+)\]/);
-//         if (arr) {
-//           const essenceNeed = parseInt(arr[2], 10) - parseInt(arr[1], 10);
-//           const essenceHave = quality.name.match(/<a:essence:451638978299428875> Animal Essence - `(\d+)`/i);
-//           if (typeof essenceHave === "number") {
-//             if (essenceHave - essenceNeed < 0) {
-//               // nếu cung < cầu thì hủy
-//               return log("Insufficient Essence, Auto Upgrade Trait has been Skipped", "e");
-//             } else {
-//               let traitName: string;
-//               switch (global.config.upgradeTrait) {
-//                 case 1:
-//                   traitName = "efficiency";
-//                   break;
-//                 case 2:
-//                   traitName = "time";
-//                   break;
-//                 case 3:
-//                   traitName = "cost";
-//                   break;
-//                 case 4:
-//                   traitName = "gain";
-//                   break;
-//                 case 5:
-//                   traitName = "exp";
-//                   break;
-//                 case 6:
-//                   traitName = "radar";
-//                   break;
-//               }
-//               send(`upg ${traitName!} all`);
-//             }
-//           }
-//         }
-//       }
-
-//       await send("hb 1");
-//       global.channel
-//         .createMessageCollector({
-//           filter: (msg) =>
-//             msg.author.id == global.owoID &&
-//             msg.content.includes(msg.guild?.members.me?.displayName!) &&
-//             msg.attachments.first() != undefined &&
-//             msg.content.includes("Here is your password!"),
-//           max: 1,
-//           time: 15_000,
-//         })
-//         .on("collect", async (msg: Message) => {
-//           if (!msg) aHuntbot();
-//           const imageUrl = msg.attachments.first()?.url;
-//           if (!imageUrl) throw new Error("Could Not Retrieve Captcha Image URL");
-//           await solveCaptcha(imageUrl, async (data: string) => {
-//             const answer = data;
-//             console.log(answer);
-//             if (!answer || /\d/.test(answer)) {
-//               throw new Error(
-//                 answer ? `Captcha Solving Returns Invalid Answer: ${answer}` : "Could Not Retrieve Captcha Answer"
-//               );
-//             }
-//             await send(`hb 24h ${answer}`);
-//             global.channel
-//               .createMessageCollector({
-//                 filter: (_msg) =>
-//                   _msg.author.id === global.owoID && _msg.content.includes(_msg.guild?.members.me?.displayName!),
-//                 max: 1,
-//                 time: 15_000,
-//               })
-//               .once("collect", async (_msg) => {
-//                 if (_msg.content.includes("BEEP BOOP. Chloe, YOU SPENT")) {
-//                   setTime(_msg.content);
-//                   if (timeoutHuntbot) {
-//                     const timeDiff = timeoutHuntbot.valueOf() - new Date().valueOf();
-//                     timeHandler(0, timeDiff, true);
-//                   }
-//                 } else {
-//                   log("I have error when solve password of huntbot!!", "e");
-//                 }
-//               });
-//           });
-//         });
-//     });
-// };
 
 const aGem = async (useGem1: boolean, useGem3: boolean, useGem4: boolean, useStar: boolean) => {
   await send("inv");
@@ -390,9 +263,11 @@ const aOther = async () => {
 const emergencyStop = async () => {
   global.paused = true;
   await sleep(300_000);
-  global.paused = false;
-  console.log("RUNNING AGAIN!");
-  if (!global.paused) main();
+  if (global.paused) {
+    global.paused = false;
+    console.log("RUNNING AGAIN!");
+    main();
+  }
 };
 
 const getPet = (data: Array<string>, msg?: string, isSigint: boolean = false) => {
@@ -455,9 +330,10 @@ export const main = async () => {
     .awaitMessages({ filter: (msg: Message): boolean => msg.author.id === global.owoID, time: 17_000 })
     .then(async (collected) => {
       if (collected.size === 0) {
-        global.error?.push(
-          "Tool paused because OwO didn't respond to your command! I will restart the tool after 5 minutes."
-        );
+        global.error = [
+          ...global.error,
+          "Tool paused because OwO didn't respond to your command! I will restart the tool after 5 minutes.",
+        ];
         await emergencyStop();
       }
     });
@@ -526,7 +402,7 @@ export const main = async () => {
     await sleep(ranInt(generalDelay - 700, generalDelay + 1300));
   }
   if (global.error?.length !== 0) {
-    global.error?.forEach((e) => log(e, "f"));
+    global.error?.forEach((e: string) => log(e, "f"));
     global.error = [];
   } else {
     log("No error was found!", "f");
