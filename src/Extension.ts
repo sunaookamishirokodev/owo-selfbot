@@ -106,7 +106,7 @@ const accountCheck = (input?: string | string[]): Promise<discord.Client> => {
   const client = new discord.Client({
     checkUpdate: false,
     patchVoice: true,
-    autoRedeemNitro: true,
+    autoRedeemNitro: false,
     syncStatus: false,
   });
   return new Promise(async (resolve, reject) => {

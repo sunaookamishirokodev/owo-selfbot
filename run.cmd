@@ -1,7 +1,7 @@
 @echo off
 
 echo Installing dependencies...
-call npm i
+call npm run init
 IF %ERRORLEVEL% NEQ 0 (
     echo Failed to install dependencies.
     exit /b 1

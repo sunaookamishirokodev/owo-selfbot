@@ -79,7 +79,7 @@ const aSleep = async () => {
   global.paused = true;
   await sleep(timeoutSleep);
   const nextShift = ranInt(38, 92);
-  timeoutShift += nextShift;
+  timeoutShift += nextShift;''
   timeoutSleep = mapInt(nextShift, 38, 92, 160_000, 1_275_000);
   if (global.paused) {
     global.paused = false;
