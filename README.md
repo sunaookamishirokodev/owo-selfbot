@@ -112,6 +112,7 @@ console.log(`%cYou now have your token in the clipboard!`, "font-size: 16px");
 #### **- Step 2: Simply paste your token into the toolfarm, this will take a while**
 
 ![Imgur](https://i.imgur.com/YarZy6A.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsunaookamishirokodev%2Fowo-selfbot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsunaookamishirokodev%2Fowo-selfbot?ref=badge_shield)
 
 ### Via QR Code
 
@@ -231,3 +232,6 @@ Please make sure to update tests as appropriate.
 💫 We are Elaina Team
 
 **Tag:** Discord selfbot, OwO selfbot, Tool Farm OwO, Advanced OwO Selfbot, Selfbot Farm OwO, Discord OwO bot selfbot, Discord OwO selfbot, etc.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsunaookamishirokodev%2Fowo-selfbot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsunaookamishirokodev%2Fowo-selfbot?ref=badge_large)
