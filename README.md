@@ -214,8 +214,6 @@ Please make sure to update tests as appropriate.
 
 **Discord:** [Sunaookami Shiroko](https://discord.com/users/962375717465763961)
 
-**Join our discord server:** [Join now](https://discord.gg/BueTaePGMH)
-
 ## Acknowledgments
 
 **SPECIAL THANKS TO:**Eternityy, Aiko-chan-ai, iamz4ri, keepmeside, gillcoder, AmiiUwU.
@@ -227,7 +225,5 @@ Please make sure to update tests as appropriate.
 ⛱️ Copyright © Shiroko x EternityVN x aiko-chan-ai 2023
 
 💖 Made by Vietnamese with love
-
-💫 We are Elaina Team
 
 **Tag:** Discord selfbot, OwO selfbot, Tool Farm OwO, Advanced OwO Selfbot, Selfbot Farm OwO, Discord OwO bot selfbot, Discord OwO selfbot, etc.
